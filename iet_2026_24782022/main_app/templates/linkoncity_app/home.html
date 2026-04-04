@@ -12,12 +12,14 @@
             font-family: 'Fredoka', sans-serif;
             text-align: center;
             margin: 0;
-            height: 100vh;
+            min-height: 100vh;
             /* Background gradasi biru gelap Deepspace */
             background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
         }
 
         /* Main Card dengan Efek Glassmorphism */
@@ -31,7 +33,7 @@
             box-shadow: 0 0 25px rgba(130, 180, 255, 0.4);
             max-width: 500px;
         }
-
+        
         /* Judul dengan Efek Cahaya */
         h1 {
             color: #e6f2ff;
@@ -41,7 +43,7 @@
             text-shadow: 0 0 10px rgba(150, 200, 255, 0.7);
             font-weight: 600;
         }
-
+        
         /* Deskripsi */
         p {
             color: #d8eaff;
@@ -49,6 +51,80 @@
             line-height: 1.6;
             margin-bottom: 0; /* Menghapus margin bawah */
         }
+
+        .btn {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 25px;
+            background-color: rgba(130, 180, 255, 0.2);
+            color: #e6f2ff;
+            border: 1px solid rgba(130, 180, 255, 0.6);
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: #0ea5e9;
+            transform: translateY(-2px);
+        }
+
+        .report-section {
+            width: 90%;
+            
+            margin-top: 40px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow:  0 0 25px rgba(130, 180, 255, 0.4);
+            color: white;
+        }
+
+        .add-link {
+            display: inline-block;
+            color: #6ad2ff;
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .table-container {
+            overflow-x: auto; /* Biar kalau layar kecil bisa di geser */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th {
+            background: rgba(130, 180, 255, 0.2);
+            padding: 15px;
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .status-badge {
+            background: rgba(130, 180, 255, 0.2);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .edit-btn { color: #fbbf24; text-decoration: none; margin-right: 10px; }
+        .delete-btn { color: #f87171; text-decoration: none; }
+
     </style>
 </head>
 <body>
@@ -60,7 +136,52 @@
             Bantu menjaga kota tetap aman, nyaman, dan terhubung 
             dengan melaporkan berbagai kejadian yang terjadi di sekitar Anda.
         </p>
+
+        <dif class="btn-group">
+
+        <a href="{% url 'contacts' %}" class="btn">Contacts</a>
+
+        <a href="{% url 'add_report' %}" class="btn">Laporkan Masalah</a>
+
+        <a href="{% url 'about' %}" class="btn">About</a>
     </div>
+
+</div>
+
+<div class="report-section">
+
+    <h2>Daftar Laporan</h2>
+
+    <table class="report-table">
+    <thead>
+        <tr>
+            <th>Judul</th>
+            <th>Kategori</th>
+            <th>Deskripsi</th> <th>Lokasi</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for report in reports %}
+        <tr>
+            <td>{{ report.title }}</td>
+            <td>{{ report.category }}</td>
+            <td>{{ report.description }}</td> <td><span class="status">{{ report.location }}</span></td>
+            <td>
+                <a href="{% url 'edit_report' report.id %}" class="edit-btn">Edit</a>
+                <a href="{% url 'delete_report' report.id %}" class="delete-btn">Hapus</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5" class="empty">Belum ada laporan</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</div>
 
 </body>
 </html>
