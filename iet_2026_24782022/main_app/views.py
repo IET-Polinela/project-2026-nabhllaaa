@@ -35,3 +35,16 @@ def delete_report(request, report_id):
         report.delete()
         return redirect('home')
     return render(request, 'linkoncity_app/delete_report.html', {'report': report})
+
+def update_status_process(request, report_id):
+    report = get_object_or_404(Report, id=report_id)
+    report.status = 'PROCESS'
+    report.save()
+    return redirect('home')
+
+
+def update_status_done(request, report_id):
+    report = get_object_or_404(Report, id=report_id)
+    report.status = 'DONE'
+    report.save()
+    return redirect('home')

@@ -169,8 +169,19 @@
             <td>{{ report.category }}</td>
             <td>{{ report.description }}</td> <td><span class="status">{{ report.location }}</span></td>
             <td>
+                {% if report.status == 'Pending' %}
+                    <span class="status-badge" style="background-color: rgba(255, 99, 132, 0.2); color: #ff6384;">{{ report.status }}</span>
+                {% elif report.status == 'In Process' %}
+                    <span class="status-badge" style="background-color: rgba(255, 206, 86, 0.2); color: #ffce56;">{{ report.status }}</span>
+                {% elif report.status == 'Done' %}
+                    <span class="status-badge" style="background-color: rgba(75, 192, 192, 0.2); color: #4bc0c0;">{{ report.status }}</span>
+                {% else %}
+                    <span class="status-badge">{{ report.status }}</span>
+                {% endif %}
                 <a href="{% url 'edit_report' report.id %}" class="edit-btn">Edit</a>
                 <a href="{% url 'delete_report' report.id %}" class="delete-btn">Hapus</a>
+                <a href="{% url 'status_process' report.id %}" class="edit-btn">Proses</a>
+                <a href="{% url 'status_done' report.id %}" class="edit-btn">Selesai</a>
             </td>
         </tr>
         {% empty %}
