@@ -129,6 +129,7 @@
 
         .edit-btn { color: #fbbf24; text-decoration: none; margin-right: 10px; font-weight: 600;}
         .delete-btn { color: #f87171; text-decoration: none; font-weight: 600;}
+        .detail-btn { color: #7bb1f3; text-decoration: none; margin-left: 10px; font-weight: 600;}
 
     </style>
 </head>
@@ -187,6 +188,7 @@
                         <td>
                             <a href="{% url 'edit_report' report.pk %}" class="edit-btn">Edit</a>
                             <a href="{% url 'delete_report' report.pk %}" class="delete-btn">Hapus</a>
+                            <a href="{% url 'report_detail' report.pk %}" class="detail-btn">Detail</a>
                         </td>
                     </tr>
                     {% empty %}
