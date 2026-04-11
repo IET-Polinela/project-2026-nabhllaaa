@@ -13,7 +13,6 @@
             text-align: center;
             margin: 0;
             min-height: 100vh;
-            /* Background gradasi biru gelap Deepspace */
             background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
             display: flex;
             flex-direction: column;
@@ -22,11 +21,10 @@
             box-sizing: border-box;
         }
 
-        /* Main Card dengan Efek Glassmorphism */
         .box {
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px); /* Support untuk Safari */
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 40px 60px;
             border-radius: 20px;
@@ -34,22 +32,20 @@
             max-width: 500px;
         }
         
-        /* Judul dengan Efek Cahaya */
         h1 {
             color: #e6f2ff;
             font-size: 38px;
             margin-bottom: 15px;
-            margin-top: 0; /* Menghapus margin bawaan atas */
+            margin-top: 0;
             text-shadow: 0 0 10px rgba(150, 200, 255, 0.7);
             font-weight: 600;
         }
         
-        /* Deskripsi */
         p {
             color: #d8eaff;
             font-size: 18px;
             line-height: 1.6;
-            margin-bottom: 0; /* Menghapus margin bawah */
+            margin-bottom: 0;
         }
 
         .btn {
@@ -62,6 +58,7 @@
             border-radius: 10px;
             font-size: 16px;
             font-weight: 600;
+            text-decoration: none;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
@@ -72,8 +69,7 @@
         }
 
         .report-section {
-            width: 90%;
-            
+            width: 95%;
             margin-top: 40px;
             padding: 25px;
             background: rgba(255, 255, 255, 0.08);
@@ -82,18 +78,6 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow:  0 0 25px rgba(130, 180, 255, 0.4);
             color: white;
-        }
-
-        .add-link {
-            display: inline-block;
-            color: #6ad2ff;
-            text-decoration: none;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-
-        .table-container {
-            overflow-x: auto; /* Biar kalau layar kecil bisa di geser */
         }
 
         table {
@@ -116,14 +100,35 @@
         }
 
         .status-badge {
-            background: rgba(130, 180, 255, 0.2);
+            background: rgba(106, 210, 255, 0.3);
             padding: 4px 10px;
             border-radius: 6px;
             font-size: 13px;
+            display: inline-block;
+            margin-bottom: 5px;
         }
 
-        .edit-btn { color: #fbbf24; text-decoration: none; margin-right: 10px; }
-        .delete-btn { color: #f87171; text-decoration: none; }
+        /* Styling Form Status */
+        .status-form select {
+            background: #1a2e35;
+            color: white;
+            border: 1px solid #4a6a75;
+            border-radius: 4px;
+            padding: 2px;
+        }
+
+        .status-form button {
+            background: #0ea5e9;
+            color: white;
+            border: none;
+            padding: 3px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .edit-btn { color: #fbbf24; text-decoration: none; margin-right: 10px; font-weight: 600;}
+        .delete-btn { color: #f87171; text-decoration: none; font-weight: 600;}
 
     </style>
 </head>
@@ -137,51 +142,62 @@
             dengan melaporkan berbagai kejadian yang terjadi di sekitar Anda.
         </p>
 
-        <dif class="btn-group">
-
-        <a href="{% url 'contacts' %}" class="btn">Contacts</a>
-
-        <a href="{% url 'add_report' %}" class="btn">Laporkan Masalah</a>
-
-        <a href="{% url 'about' %}" class="btn">About</a>
+        <div class="btn-group">
+            <a href="{% url 'contacts' %}" class="btn">Contacts</a>
+            <a href="{% url 'add_report' %}" class="btn">Laporkan Masalah</a>
+            <a href="{% url 'about' %}" class="btn">About</a>
+        </div>
     </div>
 
-</div>
+    <div class="report-section">
+        <h2>Daftar Laporan</h2>
 
-<div class="report-section">
-
-    <h2>Daftar Laporan</h2>
-
-    <table class="report-table">
-    <thead>
-        <tr>
-            <th>Judul</th>
-            <th>Kategori</th>
-            <th>Deskripsi</th> <th>Lokasi</th>
-            <th>Aksi</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        {% for report in reports %}
-        <tr>
-            <td>{{ report.title }}</td>
-            <td>{{ report.category }}</td>
-            <td>{{ report.description }}</td> <td><span class="status">{{ report.location }}</span></td>
-            <td>
-                <a href="{% url 'edit_report' report.id %}" class="edit-btn">Edit</a>
-                <a href="{% url 'delete_report' report.id %}" class="delete-btn">Hapus</a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="5" class="empty" >Belum ada laporan</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-</div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Judul</th>
+                        <th>Kategori</th>
+                        <th>Deskripsi</th>
+                        <th>Lokasi</th>
+                        <th>Status & Update</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                    <tr>
+                        <td>{{ report.title }}</td>
+                        <td>{{ report.category }}</td>
+                        <td>{{ report.description }}</td>
+                        <td>{{ report.location }}</td>
+                        <td>
+                            <span class="status-badge">{{ report.status }}</span>
+                            <form action="{% url 'update_status' report.pk %}" method="post" class="status-form">
+                                {% csrf_token %}
+                            <select name="status">
+                                <option value="REPORTED" {% if report.status == 'REPORTED' %}selected{% endif %}>REPORTED</option>
+                                <option value="VERIFIED" {% if report.status == 'VERIFIED' %}selected{% endif %}>VERIFIED</option>
+                                <option value="IN_PROGRESS" {% if report.status == 'IN_PROGRESS' %}selected{% endif %}>IN_PROGRESS</option>
+                                <option value="RESOLVED" {% if report.status == 'RESOLVED' %}selected{% endif %}>RESOLVED</option>
+                            </select>
+                                <button type="submit">Ganti</button>
+                            </form>
+                        </td>
+                        <td>
+                            <a href="{% url 'edit_report' report.pk %}" class="edit-btn">Edit</a>
+                            <a href="{% url 'delete_report' report.pk %}" class="delete-btn">Hapus</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6">Belum ada laporan</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 </body>
 </html>

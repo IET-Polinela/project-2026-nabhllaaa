@@ -1,37 +1,42 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
 from .models import Report
+from django.urls import reverse_lazy
+from django.views import View
 from .forms import ReportForm
 
-def home(request):
-    reports = Report.objects.all()
-    return render(request, 'linkoncity_app/home.html', {'reports': reports})
+class ReportListView(ListView):
+    model = Report
+    template_name = 'linkoncity_app/home.html'
+    context_object_name = 'reports'
 
-def add_report(request):
-    if request.method == 'POST':
-        form = ReportForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('home')
-    else:
-        form = ReportForm()
-    return render(request, 'linkoncity_app/add_report.html', {'form': form})
+class ReportDetailView(DetailView):
+    model = Report
+    template_name = 'linkoncity_app/report_detail.html'
+    context_object_name = 'report'
 
-    #Update
-def edit_report(request, report_id):
-    report = Report.objects.get(id=report_id)
-    if request.method == 'POST':
-        form = ReportForm(request.POST, instance=report)
-        if form.is_valid():
-            form.save()
-            return redirect('home')
-    else:
-        form = ReportForm(instance=report)
-    return render(request, 'linkoncity_app/edit_report.html', {'form': form})
+class ReportCreateView(CreateView):
+    model = Report
+    template_name = 'linkoncity_app/add_report.html'
+    form_class = ReportForm
+    success_url = reverse_lazy('home')
+
+class ReportUpdateView(UpdateView):
+    model = Report
+    template_name = 'linkoncity_app/edit_report.html'
+    form_class = ReportForm
+    success_url = reverse_lazy('home')
 
     #Delete
-def delete_report(request, report_id):
-    report = Report.objects.get(id=report_id)
-    if request.method == 'POST':
-        report.delete()
+class ReportDeleteView(DeleteView):
+    model = Report
+    template_name = 'linkoncity_app/delete_report.html'
+    success_url = reverse_lazy('home')
+
+class ReportUpdateStatusView(View):
+    def post(self, request, pk):
+        report = get_object_or_404(Report, pk=pk)
+        new_status = request.POST.get('status')
+        report.status = new_status
+        report.save()
         return redirect('home')
-    return render(request, 'linkoncity_app/delete_report.html', {'report': report})

@@ -5,7 +5,7 @@ urlpatterns = [
     path('', include('main_app.urls')),
     path('about/', include('about.urls')),
     path('contacts/', include('contacts.urls')),
-    path('add/', views.add_report, name='add_report'),
-    path('edit/<int:report_id>/', views.edit_report, name='edit_report'),
-    path('delete/<int:report_id>/', views.delete_report, name='delete_report'),
+    path('add/', views.ReportCreateView.as_view(), name='add_report'),
+    path('edit/<int:pk>/', views.ReportUpdateView.as_view(), name='edit_report'),
+    path('delete/<int:pk>/', views.ReportDeleteView.as_view(), name='delete_report'),
 ]
