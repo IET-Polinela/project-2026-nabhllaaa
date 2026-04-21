@@ -14,7 +14,7 @@
             margin: 0;
             height: 100vh;
             /* Gradasi Biru yang sedikit lebih tegas untuk halaman kontak */
-            background: linear-gradient(135deg, #0d1b2a, #1b263b, #415a77);
+            background: linear-gradient(135deg, #4676a8, #2d4e8c, #1e446e);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -67,17 +67,33 @@
         }
 
         p.footer-note {
-            color: #84a5c5;
+            color: #ffffff;
             font-size: 13px;
             margin-top: 20px;
             font-style: italic;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 25px;
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn-back:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
         }
     </style>
 </head>
 <body>
 
     <div class="box">
-        <h1>Contact Personnel</h1>
+        <h1>Contact Personal</h1>
         
         <div class="contact-item">
             <span class="contact-label">Admin Pusat Layanan</span>
@@ -97,7 +113,11 @@
         <p class="footer-note">
             "Jangan ragu untuk menghubungi jika Anda menemukan masalah di kota Linkon. Setiap laporan Anda sangat berarti bagi kami untuk menjaga kota tetap aman dan nyaman."
         </p>
+
+        <div style="text-align: center;">
+        <a href="{% url 'home' %}" class="btn-back">Kembali ke Portal</a>
     </div>
+</div>
 
 </body>
 </html>

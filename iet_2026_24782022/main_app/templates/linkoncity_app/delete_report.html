@@ -1,10 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Hapus Laporan{% endblock %}
+
+{% block content %}
+
 <h2>Hapus Laporan</h2>
 
 <p>Yakin mau hapus: <b>{{ report.title }}</b>?</p>
 
-<form method="POST">
+<form method="POST" onsubmit="showLoading('delete-btn')">
     {% csrf_token %}
-    <button type="submit">Ya, Hapus</button>
+    
+    <button type="submit" id="delete-btn" class="btn btn-danger w-100">
+        Hapus
+    </button>
+
+    <a href="{% url 'home' %}" class="btn btn-secondary w-100 mt-2">
+        Batal
+    </a>
 </form>
 
 <a href="{% url 'home' %}">Batal</a>
+
+<script>
+function showLoading(btnId) {
+    const btn = document.getElementById(btnId);
+
+    btn.disabled = true;
+    btn.innerText = "Menghapus...";
+}
+</script>
+{% endblock %}

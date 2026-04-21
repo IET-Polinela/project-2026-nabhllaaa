@@ -1,10 +1,122 @@
-<h2>Edit Laporan</h2>
+{% extends 'base.html' %}
 
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Update</button>
-</form>
+{% block title %}Edit Laporan | Linkon City{% endblock %}
 
-<a href="{% url 'home' %}">Kembali</a>
+{% block content %}
+<style>
+    body {
+        font-family: 'Fredoka', sans-serif;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #5a6fa9, #2e57b0); /* Mengikuti tema edit sebelumnya */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center; 
+        overflow-y: auto; 
+    }
 
+    /* --- Style Navbar --- */
+    nav, .navbar { 
+        position: absolute;
+        top: 0;
+        width: 100%;
+        background: rgba(82, 93, 211, 0.586);
+        padding: 15px 0;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 100;
+    }
+
+    nav a, .navbar a {
+        color: rgb(0, 0, 0);
+        text-decoration: none;
+        font-size: 14px;
+        transition: 0.3s;
+    }
+
+    nav a:hover, .navbar a:hover {
+        opacity: 1;
+        text-shadow: 0 0 10px white;
+    }
+
+    /* --- Container Utama Mengikuti Gaya Add Report --- */
+    .box {
+        background: rgba(255, 255, 255, 0.07); /* Gaya transparan add_report */
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 25px; /* Lebih ringkas */
+        border-radius: 20px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+        width: 60%;
+        max-width: 450px; /* Lebih efisien */
+        margin: 80px auto 20px auto; 
+        text-align: center;
+        color: white;
+    }
+
+    h1 {
+        font-size: 24px;
+        margin-bottom: 15px;
+        text-shadow: 0 0 10px rgba(162, 210, 255, 0.8);
+    }
+
+    /* --- Form --- */
+    .label-custom {
+        display: block;
+        text-align: left;
+        font-weight: 600;
+        margin-top: 12px;
+        font-size: 14px;
+    }
+
+    input, textarea, select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        box-sizing: border-box;
+        font-family: 'Fredoka', sans-serif;
+    }
+
+    /* --- Area Tombol --- */
+    .mt-4 {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* Menggunakan Button Standard Step 6 */
+    .btn-primary { background-color: #0d6efd; border: none; padding: 10px; border-radius: 8px; font-weight: 600; }
+    .btn-danger { background-color: #dc3545; border: none; padding: 10px; border-radius: 8px; font-weight: 600; text-decoration: none; color: white; display: block; }
+</style>
+
+<div class="box">
+    <h1>Edit Laporan</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        {# Menampilkan elemen form edit tanpa menghapusnya #}
+        {% for field in form %}
+        <div class="mb-2">
+            <label class="label-custom">{{ field.label }}</label>
+            {{ field }}
+        </div>
+        {% endfor %}
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary w-100">Update Laporan</button>
+            <a href="{% url 'home' %}" class="btn btn-danger w-100">Batal / Kembali</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

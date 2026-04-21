@@ -1,22 +1,159 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Tambah Laporan</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
+{% block title %}Tambah Laporan | Linkon City{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        font-family: 'Fredoka', sans-serif;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #438ad6, #2e4d88, #415a77);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center; /* Memposisikan box di tengah vertikal */
+        overflow-y: auto; /* Memastikan bisa di-scroll */
+    }
+
+    /* --- Style Navbar --- */
+    nav, .navbar { 
+        position: absolute;
+        top: 0;
+        width: 100%;
+        background: rgba(192, 82, 211, 0.586);
+        backdrop-filter: blur(10px);
+        padding: 15px 0;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 100;
+    }
+
+    nav a, .navbar a {
+        color: white;
+        text-decoration: none;
+        font-size: 14px;
+        opacity: 0.8;
+        transition: 0.3s;
+    }
+
+    nav a:hover, .navbar a:hover {
+        opacity: 1;
+        text-shadow: 0 0 10px white;
+    }
+
+    /* --- Container Utama --- */
+    .box {
+        background: rgba(255, 255, 255, 0.07);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+        width: 60%;
+        max-width: 500px;
+        margin: 80px auto 20px auto; /* Jarak atas disesuaikan agar tidak tertutup navbar */
+        text-align: center;
+    }
+
+    h2 {
+        color: #ffffff;
+        font-size: 20px;
+        margin-bottom: 15px;
+        text-shadow: 0 0 10px rgba(162, 210, 255, 0.8);
+    }
+
+    /* --- Form --- */
+    form {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        text-align: left;
+    }
+
+    form p {
+        color: #ffffff;
+        margin: 0;
+        font-size: 14px;
+    }
+
+    input, textarea, select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 4px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        box-sizing: border-box;
+        font-family: 'Fredoka', sans-serif;
+    }
+
+    textarea {
+        height: 70px;
+    }
+
+    /* --- Area Tombol --- */
+    .button-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        margin-top: 15px;
+    }
+
+    .btn-save {
+        width: 100%;
+        padding: 8px;
+        background: rgba(162, 210, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(162, 210, 255, 0.5);
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+    .btn-save:hover {
+        background: rgba(162, 210, 255, 0.4);
+    }
+
+    .btn-back {
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 13px;
+        opacity: 0.6;
+        transition: 0.3s;
+    }
+
+     .btn-back:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+     }
+</style>
+
+<div class="box">
     <h2>Tambah Laporan</h2>
 
-    <form method="POST">
+    <form method="POST" onsubmit="showLoading('submit-btn')">
         {% csrf_token %}
-        
         {{ form.as_p }}
-
-        <button type="submit">Simpan</button>
+        <div class="mt-4">
+            <button type="submit" id="submit-btn" class="btn btn-primary w-100">Simpan Laporan</button>
+            <a href="{% url 'home' %}" class="btn btn-secondary w-100 mt-2">Batal</a>
+        </div>
     </form>
+</div>
+<script>
+function showLoading(btnId) {
+    const btn = document.getElementById(btnId);
 
-    <br>
-    <a href="{% url 'home' %}">Kembali</a>
-
-</body>
-</html>
+    btn.disabled = true;
+    btn.innerText = "Loading...";
+}
+</script>
+{% endblock %}

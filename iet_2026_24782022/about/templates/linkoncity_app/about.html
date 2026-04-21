@@ -20,6 +20,35 @@
             align-items: center;
         }
 
+                nav, .navbar {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            /* Gunakan ini agar putih solid dan mengabaikan pengaturan lain */
+            background: rgba(209, 227, 255, 0.794) !important; 
+            /* Hapus blur agar tidak transparan */
+            backdrop-filter: none !important; 
+            padding: 15px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            border-bottom: 1px solid rgba(74, 55, 55, 0.309); /* Ganti border jadi gelap tipis */
+            z-index: 100;
+        }
+
+        nav a, .navbar a {
+            /* Ganti jadi warna gelap supaya kelihatan di bg putih */
+            color: #14487c !important; 
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        nav a:hover, .navbar a:hover {
+            opacity: 1;
+            text-shadow: 0 0 10px white;
+        }
+        
         .box {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(15px);
@@ -49,6 +78,24 @@
             color: #a2d2ff;
             font-weight: 600;
         }
+
+        .btn-back {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 25px;
+            background-color: rgba(173, 216, 230, 0.2);
+            color: #f0f8ff;
+            border: 1px solid rgba(173, 216, 230, 0.6);
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .btn-back:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
@@ -63,7 +110,10 @@
             Platform ini didirikan untuk memfasilitasi komunikasi antara warga dan para <span class="highlight">pengelola kota</span>. 
             Setiap laporan yang Anda kirimkan akan kami catat dan lakukan perbaikan segera.
         </p>
+        <div style="text-align: center;">
+            <a href="{% url 'home' %}" class="btn-back">Kembali ke Portal</a>
+        </div>
     </div>
-
+    
 </body>
 </html>

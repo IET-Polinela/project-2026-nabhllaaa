@@ -1,133 +1,147 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Linkon City | Detail Laporan</title>
+{% extends 'base.html' %}
 
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+{% block title %}Detail Laporan | Linkon City{% endblock %}
 
-    <style>
-        body {
-            font-family: 'Fredoka', sans-serif;
-            margin: 0;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            box-sizing: border-box;
-            color: white;
-        }
+{% block content %}
 
-        .detail-box {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 40px;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 600px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-            text-align: center;
-        }
+<style>
+    body {
+        font-family: 'Fredoka', sans-serif;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        /* Gradasi biru yang sama dengan add_report */
+        background: linear-gradient(135deg, #438ad6, #2e4d88, #415a77);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
 
-        .info-group {
-            margin-bottom: 20px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 10px;
-        }
+    /* Navbar dibiarkan sesuai struktur aslimu di file lain */
+    nav, .navbar { 
+        position: absolute;
+        top: 0;
+        width: 100%;
+        background: rgba(192, 82, 211, 0.586);
+        backdrop-filter: blur(10px);
+        padding: 15px 0;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        z-index: 100;
+    }
 
-        .label {
-            display: block;
-            font-size: 0.9rem;
-            color: #88c0d0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-        }
+    /* Box Detail disamakan dengan tema Add/Edit */
+    .detail-box {
+        background: rgba(255, 255, 255, 0.07); /* Glassmorphism add_report */
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+        width: 90%;
+        max-width: 500px;
+        margin: 80px auto 20px auto; 
+        color: white;
+    }
 
-        .value {
-            font-size: 1.2rem;
-            color: #ffffff;
-        }
+    h1 {
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 24px;
+        text-shadow: 0 0 10px rgba(162, 210, 255, 0.8);
+    }
 
-        .status-tag {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 50px;
-            background: rgba(52, 152, 219, 0.3);
-            border: 1px solid #3498db;
-            color: #3498db;
-            font-weight: bold;
-        }
+    .info-group {
+        margin-bottom: 15px;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-        .btn-back {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 12px 25px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50px;
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
+    .label {
+        font-size: 0.8rem;
+        color: #a2d2ff; /* Warna accent biru muda */
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
 
-        .btn-back:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-    </style>
-</head>
-<body>
+    .value {
+        font-size: 1.1rem;
+        word-wrap: break-word;
+    }
 
-    <div class="detail-box">
-        <h1>Detail Laporan</h1>
+    /* Status Tag disamakan warnanya dengan tombol utama */
+    .status-tag {
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 8px;
+        background: rgba(13, 110, 253, 0.3); /* Biru Primary Transparan */
+        border: 1px solid #0d6efd;
+        color: white;
+        font-weight: bold;
+        margin-top: 5px;
+    }
 
-        <div class="info-group">
-            <span class="label">Judul Masalah</span>
-            <div class="value">{{ report.title }}</div>
-        </div>
+    .btn-back {
+        display: block;
+        margin-top: 25px;
+        padding: 12px;
+        background: rgba(220, 53, 69, 0.2); /* Senada dengan tombol Danger di Edit */
+        color: white;
+        text-decoration: none;
+        border: 1px solid rgba(220, 53, 69, 0.5);
+        border-radius: 8px;
+        text-align: center;
+        font-weight: 600;
+        transition: 0.3s;
+    }
 
-        <div class="info-group">
-            <span class="label">Kategori</span>
-            <div class="value">{{ report.category }}</div>
-        </div>
+    .btn-back:hover {
+        background: rgba(220, 53, 69, 0.4);
+    }
+</style>
 
-        <div class="info-group">
-            <span class="label">Lokasi Kejadian</span>
-            <div class="value">{{ report.location }}</div>
-        </div>
+<div class="detail-box">
+    <h1>Detail Laporan</h1>
 
-        <div class="info-group">
-            <span class="label">Deskripsi Lengkap</span>
-            <div class="value">{{ report.description }}</div>
-        </div>
-
-        <div class="info-group">
-            <span class="label">Status Workflow</span>
-            <div class="status-tag">{{ report.status }}</div>
-        </div>
-
-        <div class="info-group">
-            <span class="label">Dilaporkan Pada</span>
-            <div class="value">{{ report.created_at|date:"d F Y, H:i" }}</div>
-        </div>
-
-        <div style="text-align: center;">
-            <a href="{% url 'home' %}" class="btn-back"> Kembali ke Portal</a>
-        </div>
+    <div class="info-group">
+        <div class="label">Judul Masalah</div>
+        <div class="value">{{ report.title }}</div>
     </div>
 
-</body>
-</html>
+    <div class="info-group">
+        <div class="label">Kategori</div>
+        <div class="value">{{ report.category }}</div>
+    </div>
+
+    <div class="info-group">
+        <div class="label">Lokasi Kejadian</div>
+        <div class="value">{{ report.location }}</div>
+    </div>
+
+    <div class="info-group">
+        <div class="label">Deskripsi Lengkap</div>
+        <div class="value">{{ report.description }}</div>
+    </div>
+
+    <div class="info-group">
+        <div class="label">Status Workflow</div>
+        <div class="status-tag">{{ report.status }}</div>
+    </div>
+
+    <div class="info-group">
+        <div class="label">Dilaporkan Pada</div>
+        <div class="value">{{ report.created_at|date:"d F Y, H:i" }}</div>
+    </div>
+
+    <a href="{% url 'home' %}" class="btn-back">Kembali ke Portal</a>
+</div>
+
+{% endblock %}
