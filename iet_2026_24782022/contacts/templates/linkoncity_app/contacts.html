@@ -1,100 +1,94 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contacts | Linkon City</title>
+{% extends 'base.html' %}
 
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+{% block title %}Contacts | Linkon City{% endblock %}
 
-    <style>
-        body {
-            font-family: 'Fredoka', sans-serif;
-            text-align: center;
-            margin: 0;
-            height: 100vh;
-            /* Gradasi Biru yang sedikit lebih tegas untuk halaman kontak */
-            background: linear-gradient(135deg, #4676a8, #2d4e8c, #1e446e);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+{% block content %}
 
+<style>
+    .contact-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center; /* ⬅️ center biar ga turun jauh */
+
+        padding: 0 20px; /* ⬅️ samping aja, atas ga usah */
+    }
+
+    .box {
+        background: rgba(255, 255, 255, 0.01);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+        max-width: 500px;
+        width: 90%;
+        color: white;
+    }
+
+    h1 {
+        font-size: 28px;
+        margin-bottom: 25px;
+        text-align: center;
+        font-weight: 600;
+        border-bottom: 2px solid rgba(162, 210, 255, 0.3);
+        padding-bottom: 10px;
+    }
+
+    .contact-item {
+        text-align: left;
+        margin-bottom: 15px;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        border-left: 4px solid #a2d2ff;
+    }
+
+    .contact-label {
+        display: block;
+        color: #a2d2ff;
+        font-size: 12px;
+        letter-spacing: 2px;
+        font-weight: 600;
+    }
+
+    .contact-value {
+        display: block;
+        font-size: 18px;
+        margin-top: 5px;
+    }
+
+    .footer-note {
+        font-size: 13px;
+        margin-top: 20px;
+        font-style: italic;
+        text-align: center;
+    }
+
+    /* 🔥 RESPONSIVE */
+    @media (max-width: 500px) {
         .box {
-            background: rgba(255, 255, 255, 0.07);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
-            max-width: 500px;
-            width: 90%;
+            max-width: 90%;
+            padding: 25px 18px;
         }
 
         h1 {
-            color: #ffffff;
-            font-size: 28px;
-            margin-bottom: 25px;
-            text-shadow: 0 0 10px rgba(162, 210, 255, 0.8);
-            border-bottom: 2px solid rgba(162, 210, 255, 0.3);
-            padding-bottom: 10px;
-        }
-
-        .contact-item {
-            text-align: left;
-            margin-bottom: 20px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            border-left: 4px solid #a2d2ff;
-        }
-
-        .contact-label {
-            display: block;
-            color: #a2d2ff;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 600;
+            font-size: 22px;
         }
 
         .contact-value {
-            display: block;
-            color: #ffffff;
-            font-size: 18px;
-            margin-top: 5px;
+            font-size: 15px;
         }
 
-        p.footer-note {
-            color: #ffffff;
-            font-size: 13px;
-            margin-top: 20px;
-            font-style: italic;
+        .contact-item {
+            padding: 12px;
         }
+    }
+</style>
 
-        .btn-back {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 12px 25px;
-            border-radius: 50px;
-            color: white;
-            text-decoration: none;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-        .btn-back:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-    </style>
-</head>
-<body>
-
+<div class="contact-wrapper">
     <div class="box">
         <h1>Contact Personal</h1>
-        
+
         <div class="contact-item">
             <span class="contact-label">Admin Pusat Layanan</span>
             <span class="contact-value">Nabhilla Li</span>
@@ -111,13 +105,9 @@
         </div>
 
         <p class="footer-note">
-            "Jangan ragu untuk menghubungi jika Anda menemukan masalah di kota Linkon. Setiap laporan Anda sangat berarti bagi kami untuk menjaga kota tetap aman dan nyaman."
+            "Jangan ragu untuk menghubungi jika Anda menemukan masalah di kota Linkon."
         </p>
-
-        <div style="text-align: center;">
-        <a href="{% url 'home' %}" class="btn-back">Kembali ke Portal</a>
     </div>
 </div>
 
-</body>
-</html>
+{% endblock %}

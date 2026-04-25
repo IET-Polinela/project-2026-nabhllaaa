@@ -1,119 +1,85 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About | Linkon City</title>
+{% extends 'base.html' %}
 
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+{% block title %}About | Linkon City{% endblock %}
 
-    <style>
-        body {
-            font-family: 'Fredoka', sans-serif;
-            text-align: center;
-            margin: 0;
-            height: 100vh;
-            /* Gradasi Biru Es yang lebih terang dari Home */
-            background: linear-gradient(135deg, #1e3c72, #2a5298, #537895);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+{% block content %}
 
-                nav, .navbar {
-            position: absolute;
-            top: 0;
-            width: 100%;
-            /* Gunakan ini agar putih solid dan mengabaikan pengaturan lain */
-            background: rgba(209, 227, 255, 0.794) !important; 
-            /* Hapus blur agar tidak transparan */
-            backdrop-filter: none !important; 
-            padding: 15px 0;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            border-bottom: 1px solid rgba(74, 55, 55, 0.309); /* Ganti border jadi gelap tipis */
-            z-index: 100;
-        }
+<style>
+    body {
+        overflow-y: hidden;
+    }
+    
+    .about-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start; /* ⬅️ ini kunci */
+        padding-top: 40px; /* atur jarak dari navbar */
+        min-height: 80vh;
+    }
 
-        nav a, .navbar a {
-            /* Ganti jadi warna gelap supaya kelihatan di bg putih */
-            color: #14487c !important; 
-            text-decoration: none;
-            font-size: 14px;
-            transition: 0.3s;
-        }
+    .box {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+        max-width: 800px;
+        color: white;
+        width: 100%;
+    }
 
-        nav a:hover, .navbar a:hover {
-            opacity: 1;
-            text-shadow: 0 0 10px white;
-        }
-        
+    h1 {
+        font-size: 30px;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    p {
+        font-size: 16px;
+        line-height: 1.7;
+        text-align: justify;
+    }
+
+    .highlight {
+        color: #a2d2ff;
+        font-weight: 600;
+    }
+
+/* 🔥 MODE HP */
+    @media (max-width: 768px) {
         .box {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 0 30px rgba(173, 216, 230, 0.3);
-            max-width: 550px;
+            max-width: 90%;   /* biar ramping */
+            padding: 25px 18px;
         }
 
         h1 {
-            color: #ffffff;
-            font-size: 32px;
-            margin-bottom: 20px;
-            text-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+            font-size: 22px;
         }
 
         p {
-            color: #f0f8ff;
-            font-size: 16px;
-            line-height: 1.8;
-            text-align: justify; /* Supaya teks penjelasan terlihat rapi */
+            font-size: 14px;
+            line-height: 1.6;
         }
+    }
+</style>
 
-        .highlight {
-            color: #a2d2ff;
-            font-weight: 600;
-        }
-
-        .btn-back {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 12px 25px;
-            background-color: rgba(173, 216, 230, 0.2);
-            color: #f0f8ff;
-            border: 1px solid rgba(173, 216, 230, 0.6);
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            text-decoration: none;
-        }
-
-        .btn-back:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-    </style>
-</head>
-<body>
-
+<div class="about-wrapper">
     <div class="box">
         <h1>Tentang Pusat Layanan Linkon City</h1>
+
         <p>
-            Linkon City adalah kota yang memprioritaskan kenyamanan dan keamanan bagi siapapun yang berkunjung</span>. 
-            Namun, <span class="highlight">Masalah</span> terkadang muncul hingga menyebabkan ketenangan warga terganggu.
+            Linkon City adalah kota yang memprioritaskan kenyamanan dan keamanan bagi siapapun yang berkunjung.
+            Namun, <span class="highlight">masalah</span> terkadang muncul hingga menyebabkan ketenangan warga terganggu.
         </p>
+
         <p>
-            Platform ini didirikan untuk memfasilitasi komunikasi antara warga dan para <span class="highlight">pengelola kota</span>. 
+            Platform ini didirikan untuk memfasilitasi komunikasi antara warga dan para 
+            <span class="highlight">pengelola kota</span>.
             Setiap laporan yang Anda kirimkan akan kami catat dan lakukan perbaikan segera.
         </p>
-        <div style="text-align: center;">
-            <a href="{% url 'home' %}" class="btn-back">Kembali ke Portal</a>
-        </div>
     </div>
-    
-</body>
-</html>
+</div>
+
+{% endblock %}

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'main_app',
     'about',
     'contacts',
+    'usermanagement_24782022',
 ]
 
 MIDDLEWARE = [
@@ -123,3 +124,11 @@ DATABASES = {
  'PORT': '5432',
  }
 }
+
+AUTH_USER_MODEL = 'usermanagement_24782022.CustomUser'
+
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'login'
+
+TIME_ZONE = 'Asia/Jakarta'
+USE_TZ = True

@@ -8,48 +8,36 @@
 
 <style>
     body {
-        font-family: 'Fredoka', sans-serif;
-        margin: 0;
-        padding: 0;
-        min-height: 100vh;
-        /* Gradasi biru yang sama dengan add_report */
         background: linear-gradient(135deg, #438ad6, #2e4d88, #415a77);
+    }
+
+    .center-page-wrapper {
         display: flex;
-        flex-direction: column;
+        justify-content: center;
         align-items: center;
-        justify-content: center;
+        min-height: auto;
+        padding-top: 10px;
     }
 
-    /* Navbar dibiarkan sesuai struktur aslimu di file lain */
-    nav, .navbar { 
-        position: absolute;
-        top: 0;
-        width: 100%;
-        background: rgba(192, 82, 211, 0.586);
-        backdrop-filter: blur(10px);
-        padding: 15px 0;
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-        z-index: 100;
+    .container {
+        margin-top: 0 !important;
     }
 
-    /* Box Detail disamakan dengan tema Add/Edit */
     .detail-box {
-        background: rgba(255, 255, 255, 0.07); /* Glassmorphism add_report */
+        background: rgba(255, 255, 255, 0.07);
         backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
         border: 1px solid rgba(255, 255, 255, 0.2);
-        padding: 30px;
-        border-radius: 20px;
+
+        padding: 15px; /* ⬅️ dari 30 jadi 20 biar lebih compact */
+        border-radius: 25px;
         box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
         width: 90%;
-        max-width: 500px;
-        margin: 80px auto 20px auto; 
+        margin: 10px auto 35px auto; /* ⬅️ tambah jarak bawah */
+        max-width: 800px;
         color: white;
     }
 
-    h1 {
+    h2 {
         text-align: center;
         margin-bottom: 25px;
         font-size: 24px;
@@ -80,36 +68,55 @@
     /* Status Tag disamakan warnanya dengan tombol utama */
     .status-tag {
         display: inline-block;
-        padding: 5px 15px;
+        padding: 4px 10px;
         border-radius: 8px;
-        background: rgba(13, 110, 253, 0.3); /* Biru Primary Transparan */
-        border: 1px solid #0d6efd;
         color: white;
         font-weight: bold;
-        margin-top: 5px;
     }
 
     .btn-back {
         display: block;
         margin-top: 25px;
-        padding: 12px;
-        background: rgba(220, 53, 69, 0.2); /* Senada dengan tombol Danger di Edit */
+        padding: 10px;
+
+        background: #dc3545; /* sama kayak btn-danger */
         color: white;
         text-decoration: none;
-        border: 1px solid rgba(220, 53, 69, 0.5);
+
+        border: none;
         border-radius: 8px;
+
         text-align: center;
         font-weight: 600;
-        transition: 0.3s;
+
+        transition: 0.2s ease;
     }
 
     .btn-back:hover {
-        background: rgba(220, 53, 69, 0.4);
+        background: #bb2d3b; /* versi hover bootstrap danger */
     }
-</style>
 
+    .btn-back:active {
+        transform: scale(0.97)
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            padding-bottom: 0 !important;
+        }
+
+        body {
+            padding-bottom: 0 !important;
+        }
+    }
+
+    .bg-reported { background-color: #27292c; color: white; }
+    .bg-verified { background-color: #0d6efd; color: white; }
+    .bg-progress { background-color: #ffc107; color: black; }
+    .bg-resolved { background-color: #198754; color: white; }
+</style>
 <div class="detail-box">
-    <h1>Detail Laporan</h1>
+    <h2>Detail Laporan</h2>
 
     <div class="info-group">
         <div class="label">Judul Masalah</div>
@@ -133,7 +140,13 @@
 
     <div class="info-group">
         <div class="label">Status Workflow</div>
-        <div class="status-tag">{{ report.status }}</div>
+        <div class="status-tag 
+            {% if report.status == 'REPORTED' %}bg-reported
+            {% elif report.status == 'VERIFIED' %}bg-verified
+            {% elif report.status == 'IN_PROGRESS' %}bg-progress
+            {% else %}bg-resolved{% endif %}">
+            {{ report.status }}
+        </div>
     </div>
 
     <div class="info-group">

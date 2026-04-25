@@ -10,14 +10,8 @@
         body {
             font-family: 'Fredoka', sans-serif;
             text-align: center;
-            margin: 0;
-            min-height: 100vh;
             background: linear-gradient(135deg, #2d7cc1, #5ea6ff, #0c2036); 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px 20px;
-            box-sizing: border-box;
+            overflow: auto;
         }
 
         .box {
@@ -26,43 +20,29 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 40px 60px;
+            padding: 25px 30px;
             border-radius: 20px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
             max-width: 500px;
-            margin: 0 auto 40px auto; 
+            margin: 0 auto 30px auto; 
         }
         
-        nav, .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            /* Gunakan ini agar putih solid dan mengabaikan pengaturan lain */
-            background: rgb(209, 227, 255) !important; 
-            /* Hapus blur agar tidak transparan */
-            backdrop-filter: none !important; 
-            padding: 15px 0;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            border-bottom: 1px solid rgba(74, 55, 55, 0.309); /* Ganti border jadi gelap tipis */
-            z-index: 100;
-        }
+        @media (max-width: 768px) {
+            .box {
+                max-width: 95%;
+                padding: 20px 15px; /* kecilin biar ga sesek */
+                margin-bottom: 20px;
+            }
 
-        nav a, .navbar a {
-            /* Ganti jadi warna gelap supaya kelihatan di bg putih */
-            color: #14487c !important; 
-            text-decoration: none;
-            font-size: 14px;
+            h1 {
+                font-size: 22px; /* sebelumnya kegedean */
+                line-height: 1.3;
+            }
 
-            transition: 0.3s;
+            p {
+                font-size: 14px;
+            }
         }
-
-        nav a:hover, .navbar a:hover {
-            opacity: 1;
-            text-shadow: 0 0 10px white;
-        }
-        
         h1 {
             color: #14487c;
             font-size: 38px;
@@ -92,6 +72,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
             color: #14487c;
+            max-height: none;
         }
 
         table {
@@ -191,10 +172,9 @@
             text-decoration: none;
             margin-left: 10px;
         }
-
         .table-wrapper {
-            width: 100%;
-            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
         }
 
         @media (max-width: 768px) {
@@ -245,98 +225,81 @@
                     <th>Aksi</th>
                 </tr>
             </thead>
-            <tbody>
+                <tbody>
                 {% for report in reports %}
                 <tr>
                     <td>{{ report.title }}</td>
                     <td>{{ report.category }}</td>
-                    <td>{{ report.description }}</td>
-                    <td>{{ report.location }}</td>
-                <td>
-                    <span class="status-badge 
-                        {% if report.status == 'REPORTED' %}bg-reported
-                        {% elif report.status == 'VERIFIED' %}bg-verified
-                        {% elif report.status == 'IN_PROGRESS' %}bg-progress
-                        {% else %}bg-resolved{% endif %}">
-                        {{ report.status }}
-                    </span>
-                </td>
+                    <td>{{ report.description|truncatechars:50 }}</td>
+                    <td>{{ report.location|truncatechars:50 }}</td>
 
-                <td>
-                    {% if report.status != 'RESOLVED' %}
-                <form action="{% url 'update_status' report.pk %}" 
-                    method="post"
-                    onsubmit="return confirm('Yakin mau mengubah status laporan ini?')"
-                    style="display: flex; gap: 5px; justify-content: center; align-items: stretch;">
-                        {% csrf_token %}
-                        <select name="status" style="padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
-                            <option value="REPORTED" {% if report.status == 'REPORTED' %}selected{% endif %}>REPORTED</option>
-                            <option value="VERIFIED" {% if report.status == 'VERIFIED' %}selected{% endif %}>VERIFIED</option>
-                            <option value="IN_PROGRESS" {% if report.status == 'IN_PROGRESS' %}selected{% endif %}>IN_PROGRESS</option>
-                            <option value="RESOLVED" {% if report.status == 'RESOLVED' %}selected{% endif %}>RESOLVED</option>
-                        </select>
-                        <button type="submit" style="padding: 5px 10px; cursor: pointer; background: #0ea5e9; color: white; border: none; border-radius: 4px;">Update</button>
-                    </form>
-                    {% else %}
-                    <span style="color: #0d0d0d; font-size: 12px;">Selesai</span>
-                    {% endif %}
-                </td>
                     <td>
-                        <a href="{% url 'edit_report' report.pk %}" class="edit-btn">Edit</a>
-                        <a href="{% url 'delete_report' report.pk %}" class="delete-btn">Hapus</a>
+                        <span class="status-badge 
+                            {% if report.status == 'REPORTED' %}bg-reported
+                            {% elif report.status == 'VERIFIED' %}bg-verified
+                            {% elif report.status == 'IN_PROGRESS' %}bg-progress
+                            {% else %}bg-resolved{% endif %}">
+                            {{ report.status }}
+                        </span>
+                    </td>
+
+                    <!-- UPDATE STATUS -->
+                    <td>
+                        {% if user.is_authenticated and user.is_admin %}
+                            {% if report.status != 'RESOLVED' %}
+                                <form action="{% url 'update_status' report.pk %}" 
+                                    method="post"
+                                    onsubmit="return confirm('Yakin mau mengubah status laporan ini?')"
+                                    style="display: flex; gap: 5px; justify-content: center;">
+
+                                    {% csrf_token %}
+                                    <select name="status" style="padding: 5px; border-radius: 4px;">
+                                        <option value="REPORTED" {% if report.status == 'REPORTED' %}selected{% endif %}>REPORTED</option>
+                                        <option value="VERIFIED" {% if report.status == 'VERIFIED' %}selected{% endif %}>VERIFIED</option>
+                                        <option value="IN_PROGRESS" {% if report.status == 'IN_PROGRESS' %}selected{% endif %}>IN_PROGRESS</option>
+                                        <option value="RESOLVED" {% if report.status == 'RESOLVED' %}selected{% endif %}>RESOLVED</option>
+                                    </select>
+
+                                    <button type="submit" 
+                                        style="padding: 5px 10px; cursor: pointer; background: #0ea5e9; color: white; border: none; border-radius: 4px;">
+                                        Update
+                                    </button>
+                                </form>
+                            {% else %}
+                                <span>Selesai</span>
+                            {% endif %}
+                        {% else %}
+                            <span>-</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- AKSI -->
+                    <td>
                         <a href="{% url 'report_detail' report.pk %}" class="detail-btn">Detail</a>
+
+                        {% if user.is_authenticated and user.is_admin %}
+                            <a href="{% url 'edit_report' report.pk %}" class="edit-btn">Edit</a>
+
+                            <a href="{% url 'delete_report' report.pk %}" 
+                            class="delete-btn btn-delete"
+                            data-url="{% url 'delete_report' report.pk %}">
+                            Hapus
+                            </a>
+                        {% endif %}
                     </td>
                 </tr>
+
                 {% empty %}
                 <tr>
                     <td colspan="7">
                         <div class="empty-state">
-                            <p>Belum ada laporan </p>
+                            <p>Belum ada laporan</p>
                             <a href="{% url 'add_report' %}" class="add-btn">+ Tambah Laporan</a>
                         </div>
                     </td>
                 </tr>
                 {% endfor %}
-            </tbody>
+                </tbody>
         </table>
     </div>
-<!-- MODAL KONFIRMASI -->
-<div id="confirmModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h3>Are you sure?</h3>
-        <p>Yakin mau hapus laporan ini?</p>
-
-        <div class="modal-actions">
-            <button id="cancelBtn">Cancel</button>
-            <a id="confirmDelete" href="#">Delete</a>
-        </div>
-    </div>
-</div>
-
-<script>
-const modal = document.getElementById("confirmModal");
-const closeBtn = document.querySelector(".close");
-const cancelBtn = document.getElementById("cancelBtn");
-const confirmDelete = document.getElementById("confirmDelete");
-
-document.querySelectorAll(".btn-delete").forEach(btn => {
-    btn.addEventListener("click", function(e) {
-        e.preventDefault();
-        const url = this.getAttribute("data-url");
-
-        confirmDelete.setAttribute("href", url);
-        modal.style.display = "block";
-    });
-});
-
-closeBtn.onclick = () => modal.style.display = "none";
-cancelBtn.onclick = () => modal.style.display = "none";
-
-window.onclick = function(e) {
-    if (e.target == modal) {
-        modal.style.display = "none";
-    }
-}
-</script>
 {% endblock %}
