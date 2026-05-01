@@ -261,6 +261,7 @@
         fetch('/dashboard/data/')
         .then(res => res.json())
         .then(data => {
+            console.log("Data dari server:", data);
             const colorMap = { 'REPORTED': '#27292c', 'VERIFIED': '#0d6efd', 'IN_PROGRESS': '#ffc107', 'RESOLVED': '#198754' };
             
             // --- Update Status Chart ---
