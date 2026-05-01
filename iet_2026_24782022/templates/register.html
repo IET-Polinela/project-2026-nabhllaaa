@@ -1,81 +1,157 @@
 {% extends 'base.html' %}
 
+{% block title %}Register | Linkon City{% endblock %}
+
 {% block content %}
+<!-- Font Fredoka -->
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+
 <style>
     body {
-        background: linear-gradient(135deg, #438ad6, #2e4d88, #415a77);
+        font-family: 'Fredoka', sans-serif;
+        background: linear-gradient(135deg, #2d7cc1, #5ea6ff, #0c2036);
+        min-height: 100vh;
+        margin: 0;
+        /* Biarkan auto karena form register biasanya panjang */
+        overflow-y: auto; 
     }
 
     .register-wrapper {
         display: flex;
         justify-content: center;
-        align-items: center;
-        min-height: calc(100vh - 70px);
+        align-items: flex-start; 
+        
+        /* 1. Paksa naik dengan margin negatif untuk melawan mt-4 dari base */
+        margin-top: -20px; 
+        
+        /* 2. Gunakan padding-top untuk kontrol presisi posisi box */
+        /* Ubah angka 30px ini untuk naik (kecilkan) atau turun (besarkan) */
+        padding-top: 25px; 
+        
+        /* 3. Beri jarak bawah agar tidak nempel footer */
+        padding-bottom: 0px; 
+        
+        min-height: calc(100vh - 150px); /* Menyesuaikan tinggi sisa layar */
     }
 
     .register-box {
-        background: rgba(255, 255, 255, 0.07);
+        background: rgba(209, 227, 255, 0.85); 
         backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
         border: 1px solid rgba(255, 255, 255, 0.2);
-
-        padding: 20px;
-        border-radius: 20px;
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
-
+        padding: 30px;
+        border-radius: 25px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
         width: 90%;
-        max-width: 500px;
-
-        color: white;
+        max-width: 800px; /* Sedikit lebih lebar dari login */
+        color: #14487c;
     }
 
     h3 {
-        text-align: center;
+        font-weight: 600;
+        font-size: 28px;
         margin-bottom: 20px;
-        text-shadow: 0 0 10px rgba(162, 210, 255, 0.8);
+        text-align: center;
     }
 
-    input {
-        width: 100%;
-        padding: 8px;
-        margin-top: 5px;
+    /* Styling Form Django as_p agar rapi */
+    form p {
+        text-align: left;
+        font-size: 14px;
         margin-bottom: 12px;
-
-        border-radius: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-    }
-
-    .btn-primary {
-        border-radius: 8px;
         font-weight: 600;
     }
 
-    /* 📱 HP */
-    @media (max-width: 600px) {
-        .container {
-            padding-bottom: 0 !important;
-        }
+    /* Target Input Field */
+    input[type="text"], 
+    input[type="password"],
+    input[type="email"],
+    input[type="number"],
+    select,
+    .form-control {
+        width: 100%;
+        padding: 10px 15px;
+        margin-top: 5px;
+        border-radius: 10px;
+        border: 1px solid rgba(20, 72, 124, 0.2);
+        background: rgba(255, 255, 255, 0.5);
+        color: #14487c;
+        font-family: 'Fredoka', sans-serif;
+    }
 
-        body {
-            padding-bottom: 35px !important;
+    input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.8);
+        border-color: #0ea5e9;
+    }
+
+    /* Bantuan teks Django (help text) */
+    .helptext {
+        display: block;
+        font-size: 11px;
+        color: #557ba3;
+        font-weight: 400;
+        margin-top: 5px;
+    }
+
+    .btn-register {
+        background: #0ea5e9;
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 12px;
+        width: 100%;
+        font-weight: 600;
+        font-size: 16px;
+        margin-top: 20px;
+        transition: 0.3s;
+        box-shadow: 0 5px 15px rgba(14, 165, 233, 0.3);
+    }
+
+    .btn-register:hover {
+        background: #0c87bd;
+        transform: translateY(-2px);
+    }
+
+    /* Link tambahan (misal: "Sudah punya akun?") */
+    .login-link {
+        display: block;
+        text-align: center;
+        margin-top: 15px;
+        font-size: 14px;
+        color: #14487c;
+        text-decoration: none;
+    }
+
+    .login-link:hover {
+        text-decoration: underline;
+    }
+
+    /* 📱 MODE HP */
+    @media (max-width: 768px) {
+        .register-wrapper {
+            padding-top: 20px;
+            padding-bottom: 5px; /* Ruang ekstra untuk navigasi bawah HP */
+        }
+        .register-box {
+            padding: 15px;
         }
     }
-    
 </style>
 
 <div class="register-wrapper">
     <div class="register-box">
-        <h3>Register</h3>
+        <h3>Daftar Akun</h3>
 
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
-
-            <button type="submit" class="btn btn-primary w-100">
-                Daftar
+            <button type="submit" class="btn-register">
+                Register Sekarang
             </button>
         </form>
+
+        <a href="/login/" class="login-link">Sudah punya akun? Login di sini</a>
     </div>
 </div>
 {% endblock %}

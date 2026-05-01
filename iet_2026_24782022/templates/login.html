@@ -1,62 +1,112 @@
 {% extends 'base.html' %}
 
+{% block title %}Login | Linkon City{% endblock %}
+
 {% block content %}
+<!-- Font Fredoka tetap wajib ada -->
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+
 <style>
     body {
-        background: linear-gradient(135deg, #438ad6, #2e4d88, #415a77);
-        overflow: hidden;
+        font-family: 'Fredoka', sans-serif;
+        background: linear-gradient(135deg, #2d7cc1, #5ea6ff, #0c2036);
+        min-height: 100vh;
+        margin: 0;
+        /* Mematikan scroll jika konten pas di layar */
+        overflow: hidden; 
     }
 
     .login-wrapper {
         display: flex;
         justify-content: center;
         align-items: center;
-        min-height: calc(80vh - 70px);
+        /* Mengatur posisi box agar tidak terlalu mepet navbar base_2.html */
+        min-height: calc(100vh - 150px);
+        margin-top: -20px; 
+        padding: 20px;
     }
 
     .login-box {
-        background: rgba(255, 255, 255, 0.07);
+        /* Warna biru navy transparan setema */
+        background: rgba(209, 227, 255, 0.8); 
         backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
         border: 1px solid rgba(255, 255, 255, 0.2);
-
-        padding: 25px;
-        border-radius: 20px;
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
-
-        width: 90%;
+        padding: 35px;
+        border-radius: 25px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        width: 100%;
         max-width: 400px;
-
-        color: white;
+        color: #14487c; /* Warna teks navy gelap[cite: 4] */
+        text-align: center;
     }
 
     h3 {
-        text-align: center;
-        margin-bottom: 20px;
-        text-shadow: 0 0 10px rgba(162, 210, 255, 0.8);
+        font-weight: 600;
+        font-size: 28px;
+        margin-bottom: 25px;
+        color: #14487c;
     }
 
-    input {
-        width: 100%;
-        padding: 8px;
-        margin-top: 5px;
-        margin-bottom: 12px;
-
-        border-radius: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-    }
-
-    .btn-primary {
-        border-radius: 8px;
+    /* Styling otomatis untuk form Django as_p */
+    form p {
+        text-align: left;
+        font-size: 14px;
+        margin-bottom: 15px;
         font-weight: 600;
     }
 
-    /* 📱 HP */
+    /* Target semua input di dalam form */
+    input[type="text"], 
+    input[type="password"],
+    input[type="email"],
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        margin-top: 5px;
+        border-radius: 12px;
+        border: 1px solid rgba(20, 72, 124, 0.2);
+        background: rgba(255, 255, 255, 0.5); /* Putih transparan agar teks input terbaca */
+        color: #14487c;
+        font-family: 'Fredoka', sans-serif;
+        transition: 0.3s;
+    }
+
+    input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.8);
+        border-color: #0ea5e9;
+        box-shadow: 0 0 10px rgba(14, 165, 233, 0.2);
+    }
+
+    .btn-login {
+        background: #0ea5e9; /* Biru cerah aksen dashboard[cite: 4] */
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 12px;
+        width: 100%;
+        font-weight: 600;
+        font-size: 16px;
+        margin-top: 10px;
+        transition: 0.3s;
+        box-shadow: 0 5px 15px rgba(14, 165, 233, 0.3);
+    }
+
+    .btn-login:hover {
+        background: #0c87bd;
+        transform: translateY(-2px);
+    }
+
+    /* 📱 MODE HP */
     @media (max-width: 768px) {
+        body { overflow-y: auto; } /* Aktifkan scroll di HP jika keyboard menutupi layar */
         .login-wrapper {
             align-items: flex-start;
-            padding-top: 40px;
+            padding-top: 60px;
+        }
+        .login-box {
+            padding: 25px;
         }
     }
 </style>
@@ -68,8 +118,8 @@
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" class="btn btn-primary w-100">
-                Login
+            <button type="submit" class="btn-login">
+                Sign In
             </button>
         </form>
     </div>
