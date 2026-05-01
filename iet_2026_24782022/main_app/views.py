@@ -6,6 +6,34 @@ from django.views import View
 from .forms import ReportForm
 from django.contrib import messages
 from django.shortcuts import redirect
+from django.http import JsonResponse
+from .models import Report
+from django.db.models import Q
+
+def search_reports(request):
+    query = request.GET.get('q', '')
+
+    reports = Report.objects.all()
+
+    if query:
+        words = query.split()
+
+        q_objects = Q()
+        for word in words:
+            q_objects &= (
+                Q(title__icontains=word) |
+                Q(category__icontains=word) |
+                Q(description__icontains=word) |
+                Q(location__icontains=word)
+            )
+
+        reports = reports.filter(q_objects)
+
+    data = list(reports.values(
+        'id', 'title', 'category', 'description', 'location', 'status'
+    ))
+
+    return JsonResponse({'results': data})
 
 class AdminRequiredMixin:
     def dispatch(self, request, *args, **kwargs):
@@ -60,3 +88,18 @@ class ReportUpdateStatusView(View):
 
         messages.success(request, "Status berhasil diperbarui.")
         return redirect('home')
+
+def report_detail_api(request, pk):
+    try:
+        report = Report.objects.get(pk=pk)
+
+        return JsonResponse({
+            "title": report.title,
+            "category": report.category,
+            "status": report.status,
+            "created_at": report.created_at.strftime("%Y-%m-%d"),
+            "description": report.description,
+        })
+
+    except Report.DoesNotExist:
+        return JsonResponse({"error": "Not found"}, status=404)

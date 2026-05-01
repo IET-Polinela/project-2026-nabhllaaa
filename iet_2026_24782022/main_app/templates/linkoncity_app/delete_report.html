@@ -1,106 +1,158 @@
 {% extends 'base.html' %}
 
-{% block title %}Hapus Laporan{% endblock %}
+{% block title %}Hapus Laporan | Linkon City{% endblock %}
 
 {% block content %}
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
+    /* Paksa Font Fredoka agar serasi */
+    * {
+        font-family: 'Fredoka', sans-serif !important;
+    }
+
+    body {
+        background: linear-gradient(135deg, #2d7cc1, #5ea6ff, #0c2036) !important;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
     .delete-box {
-        background: rgba(209, 227, 255, 0.1);
+        background: rgba(255, 255, 255, 0.9); /* Putih semi-transparan agar teks jelas */
         backdrop-filter: blur(15px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        padding: 35px 25px;
+        border-radius: 30px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
 
-        padding: 20px;
-        border-radius: 20px;
-
+        /* KUNCI UKURAN: Tetap kecil di desktop & mobile */
         width: 90%;
-        max-width: 400px;
+        max-width: 380px; 
         margin: 0 auto;
-
         text-align: center;
-        color: white;
 
-        /* Animasi masuk */
-        animation: fadeIn 0.5s ease;
+        animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: scale(0.95);
-        }
-        to {
-            opacity: 1;
-            transform: scale(1);
-        }
+    @keyframes popIn {
+        from { opacity: 0; transform: scale(0.8); }
+        to { opacity: 1; transform: scale(1); }
     }
 
-    .warning-icon {
-        font-size: 40px;
-        margin-bottom: 10px;
+     .warning-icon {
+        font-size: 50px;
+        color: #ef4444;
+        margin-bottom: 35px;
     }
 
     h2 {
+        color: #14487c;
+        font-weight: 600;
+        font-size: 24px;
         margin-bottom: 10px;
-        font-weight: 600;
     }
 
-    p {
+    .report-info {
+        background: rgba(20, 72, 124, 0.05);
+        padding: 15px;
+        border-radius: 15px;
+        margin-bottom: 25px;
+        border: 1px dashed rgba(20, 72, 124, 0.2);
+    }
+
+    .report-info p {
+        color: #475569;
         font-size: 14px;
-        opacity: 0.9;
-        margin-bottom: 20px;
+        margin: 0;
     }
 
-    .btn-danger {
+    .report-title {
+        display: block;
+        color: #1e293b;
         font-weight: 600;
+        font-size: 16px;
+        margin-top: 5px;
     }
 
-    .btn-secondary {
-        background-color: black !important;
+    /* Tombol Style */
+    .btn-delete {
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
+        color: white;
         border: none;
+        padding: 14px;
+        border-radius: 15px;
         font-weight: 600;
+        width: 100%;
+        transition: 0.3s;
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        cursor: pointer;
     }
 
-    .btn-secondary:hover {
-        background-color: #333 !important;
-        font-weight: 600;
+    .btn-delete:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+        filter: brightness(1.1);
     }
 
+    .btn-cancel {
+        display: block;
+        margin-top: 15px;
+        color: #64748b;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        transition: 0.2s;
+    }
+
+    .btn-cancel:hover {
+        color: #14487c;
+        text-decoration: underline;
+    }
+
+    /* Khusus Mobile */
+    @media (max-width: 480px) {
+        .delete-box {
+            padding: 30px 20px;
+            max-width: 320px; /* Lebih ramping lagi di HP */
+        }
+        h2 { font-size: 20px; }
+    }
 </style>
 
 <div class="delete-box">
+    <div class="warning-icon">
+         ⚠️
+        <i class="fas fa-exclamation-triangle       "></i>
+        <!-- Jika tidak pakai FontAwesome, pakai emoji ini: ⚠️ -->
+    </div>
 
-    <div class="warning-icon">⚠️</div>
+    <h2>Hapus Laporan?</h2>
 
-    <h2>Hapus Laporan</h2>
-
-    <p>
-        Yakin mau hapus:<br>
-        <b>{{ report.title }}</b>?
-    </p>
+    <div class="report-info">
+        <p>Anda akan menghapus laporan:</p>
+        <span class="report-title">"{{ report.title }}"</span>
+    </div>
 
     <form method="POST" onsubmit="showLoading('delete-btn')">
         {% csrf_token %}
-        
-        <button type="submit" id="delete-btn" class="btn btn-danger w-100">
-            Hapus
+        <button type="submit" id="delete-btn" class="btn-delete">
+            Ya, Hapus Sekarang
         </button>
-
-        <a href="{% url 'home' %}" class="btn btn-secondary w-100 mt-2">
-            Batal
-        </a>
+        <a href="{% url 'home' %}" class="btn-cancel">Batal dan Kembali</a>
     </form>
-
 </div>
 
 <script>
 function showLoading(btnId) {
     const btn = document.getElementById(btnId);
-
     btn.disabled = true;
-    btn.innerText = "Loading...";
+    btn.style.opacity = "0.7";
+    btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Menghapus...`;
 }
 </script>
-
 {% endblock %}

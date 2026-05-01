@@ -3,158 +3,204 @@
 {% block title %}Detail Laporan | Linkon City{% endblock %}
 
 {% block content %}
-
+<!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
-    body {
-        background: linear-gradient(135deg, #438ad6, #2e4d88, #415a77);
+    /* PAKSA FONT FREDOKA */
+    * {
+        font-family: 'Fredoka', sans-serif !important;
     }
 
-    .center-page-wrapper {
+    body {
+        background: linear-gradient(135deg, #2d7cc1, #5ea6ff, #0c2036) !important;
+        background-attachment: fixed !important;
+        min-height: 100vh;
+        margin: 0;
+    }
+
+    .content-wrapper {
+        padding: 10px 0;
         display: flex;
         justify-content: center;
         align-items: center;
-        min-height: auto;
-        padding-top: 10px;
-    }
-
-    .container {
-        margin-top: 0 !important;
+        min-height: calc(100vh - 80px);
     }
 
     .detail-box {
-        background: rgba(255, 255, 255, 0.07);
-        backdrop-filter: blur(15px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-
-        padding: 15px; /* ⬅️ dari 30 jadi 20 biar lebih compact */
-        border-radius: 25px;
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+        background: rgba(209, 227, 255, 0.9); /* Selaras dengan Register/Add Report */
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        padding: 40px;
+        border-radius: 35px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        
+        /* RESPONSIVE LAYOUT */
         width: 90%;
-        margin: 10px auto 35px auto; /* ⬅️ tambah jarak bawah */
-        max-width: 800px;
-        color: white;
+        max-width: 800px; /* Di Desktop tetap lebar dan gagah */
+        color: #14487c; /* Teks biru gelap agar kontras dan terbaca */
     }
 
     h2 {
+        font-weight: 600;
         text-align: center;
-        margin-bottom: 25px;
-        font-size: 24px;
-        text-shadow: 0 0 10px rgba(162, 210, 255, 0.8);
+        margin-bottom: 30px;
+        font-size: 28px;
+        color: #14487c;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
     }
 
     .info-group {
-        margin-bottom: 15px;
-        background: rgba(255, 255, 255, 0.05);
-        padding: 12px;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 10px;
+        background: rgba(255, 255, 255, 0.6);
+        padding: 15px 20px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        transition: transform 0.3s ease;
+    }
+
+    .info-group:hover {
+        transform: translateY(-3px);
+        background: #ffffff;
+    }
+
+    /* Deskripsi dibuat full width di dalam grid */
+    .full-width {
+        grid-column: span 2;
     }
 
     .label {
-        font-size: 0.8rem;
-        color: #a2d2ff; /* Warna accent biru muda */
+        font-size: 12px;
+        color: #5ea6ff;
         text-transform: uppercase;
         font-weight: 600;
-        margin-bottom: 4px;
+        letter-spacing: 1px;
+        margin-bottom: 5px;
     }
 
     .value {
-        font-size: 1.1rem;
+        font-size: 16px;
+        font-weight: 600;
         word-wrap: break-word;
+        color: #1e293b;
     }
 
-    /* Status Tag disamakan warnanya dengan tombol utama */
+    /* Status Tags */
     .status-tag {
         display: inline-block;
-        padding: 4px 10px;
-        border-radius: 8px;
+        padding: 6px 15px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
         color: white;
-        font-weight: bold;
     }
+
+    .bg-reported { background: #64748b; }
+    .bg-verified { background: #3b82f6; }
+    .bg-progress { background: #f59e0b; }
+    .bg-resolved { background: #10b981; }
 
     .btn-back {
         display: block;
-        margin-top: 25px;
-        padding: 10px;
-
-        background: #dc3545; /* sama kayak btn-danger */
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(to right, #64748b, #475569);
         color: white;
         text-decoration: none;
-
-        border: none;
-        border-radius: 8px;
-
+        border-radius: 50px;
         text-align: center;
         font-weight: 600;
-
-        transition: 0.2s ease;
+        margin-top: 30px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        transition: 0.3s;
     }
 
     .btn-back:hover {
-        background: #bb2d3b; /* versi hover bootstrap danger */
+        transform: translateY(-2px);
+        filter: brightness(1.1);
+        color: white;
     }
 
-    .btn-back:active {
-        transform: scale(0.97)
-    }
-
+    /* 📱 MODE HP (Satu Layar Cukup) */
     @media (max-width: 768px) {
-        .container {
-            padding-bottom: 0 !important;
+        .content-wrapper {
+            padding: 5px 0;
+            padding-bottom: 5px;
         }
 
-        body {
-            padding-bottom: 0 !important;
+        .detail-box {
+            padding: 25px 20px;
+            max-width: 450px; /* Ramping di HP seperti Register */
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr; /* Jadi satu kolom saja di HP */
+            gap: 12px;
+        }
+
+        .full-width {
+            grid-column: span 1;
+        }
+
+        h2 { font-size: 22px; }
+        
+        .info-group {
+            padding: 12px 15px;
         }
     }
-
-    .bg-reported { background-color: #27292c; color: white; }
-    .bg-verified { background-color: #0d6efd; color: white; }
-    .bg-progress { background-color: #ffc107; color: black; }
-    .bg-resolved { background-color: #198754; color: white; }
 </style>
-<div class="detail-box">
-    <h2>Detail Laporan</h2>
 
-    <div class="info-group">
-        <div class="label">Judul Masalah</div>
-        <div class="value">{{ report.title }}</div>
-    </div>
+<div class="content-wrapper">
+    <div class="detail-box">
+        <h2>Detail Laporan</h2>
 
-    <div class="info-group">
-        <div class="label">Kategori</div>
-        <div class="value">{{ report.category }}</div>
-    </div>
+        <div class="info-grid">
+            <div class="info-group">
+                <div class="label">Judul Masalah</div>
+                <div class="value">{{ report.title }}</div>
+            </div>
 
-    <div class="info-group">
-        <div class="label">Lokasi Kejadian</div>
-        <div class="value">{{ report.location }}</div>
-    </div>
+            <div class="info-group">
+                <div class="label">Kategori</div>
+                <div class="value">{{ report.category }}</div>
+            </div>
 
-    <div class="info-group">
-        <div class="label">Deskripsi Lengkap</div>
-        <div class="value">{{ report.description }}</div>
-    </div>
+            <div class="info-group">
+                <div class="label">Lokasi Kejadian</div>
+                <div class="value">{{ report.location }}</div>
+            </div>
 
-    <div class="info-group">
-        <div class="label">Status Workflow</div>
-        <div class="status-tag 
-            {% if report.status == 'REPORTED' %}bg-reported
-            {% elif report.status == 'VERIFIED' %}bg-verified
-            {% elif report.status == 'IN_PROGRESS' %}bg-progress
-            {% else %}bg-resolved{% endif %}">
-            {{ report.status }}
+            <div class="info-group">
+                <div class="label">Status Workflow</div>
+                <div>
+                    <span class="status-tag 
+                        {% if report.status == 'REPORTED' %}bg-reported
+                        {% elif report.status == 'VERIFIED' %}bg-verified
+                        {% elif report.status == 'IN_PROGRESS' %}bg-progress
+                        {% else %}bg-resolved{% endif %}">
+                        {{ report.status }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="info-group full-width">
+                <div class="label">Dilaporkan Pada</div>
+                <div class="value">{{ report.created_at|date:"d F Y, H:i" }} WIB</div>
+            </div>
+
+            <div class="info-group full-width">
+                <div class="label">Deskripsi Lengkap</div>
+                <div class="value">{{ report.description }}</div>
+            </div>
         </div>
-    </div>
 
-    <div class="info-group">
-        <div class="label">Dilaporkan Pada</div>
-        <div class="value">{{ report.created_at|date:"d F Y, H:i" }}</div>
+        <a href="{% url 'home' %}" class="btn-back">Kembali ke Portal</a>
     </div>
-
-    <a href="{% url 'home' %}" class="btn-back">Kembali ke Portal</a>
 </div>
-
 {% endblock %}

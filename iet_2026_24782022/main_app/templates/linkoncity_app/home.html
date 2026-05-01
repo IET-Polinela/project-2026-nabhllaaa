@@ -23,7 +23,7 @@
             padding: 25px 30px;
             border-radius: 20px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            max-width: 500px;
+            max-width: 600px;
             margin: 0 auto 30px auto; 
         }
         
@@ -62,7 +62,7 @@
         .report-section {
             width: 100%; 
             margin: 0 auto;
-            max-width: 900px;
+            max-width: 1200px;
              /* Diubah menjadi biru gelap transparan (navy) agar senada */
             padding: 25px;
             /* Diubah dari biru terang ke biru gelap transparan */
@@ -124,57 +124,74 @@
         .delete-btn { color: #ff0000; text-decoration: none; font-weight: 600;}
         .detail-btn { color: #0073ff; text-decoration: none; margin-left: 0px; font-weight: 600;}
 
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 999;
-            left: 0;
-            top: 0;
+        /* --- FIX SEARCH BAR --- */
+        #searchInput {
             width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-        }
-
-        .modal-content {
+            max-width: 350px; /* Sedikit diperkecil sesuai request sebelumnya */
+            padding: 10px 18px;
+            margin: 10px 0 20px 0;
+            border: 2px solid rgba(20, 72, 124, 0.2);
+            border-radius: 25px;
+            font-family: 'Fredoka', sans-serif;
+            outline: none;
             background: white;
-            width: 300px;
-            margin: 15% auto;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            position: relative;
         }
 
-        .close {
-            position: absolute;
-            right: 10px;
-            top: 5px;
-            cursor: pointer;
-        }
-
-        .modal-actions {
-            margin-top: 15px;
-        }
-
-        .modal-actions button {
-            padding: 6px 12px;
-            border: none;
-            background: #ccc;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .modal-actions a {
-            padding: 6px 12px;
-            background: red;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
-            margin-left: 10px;
-        }
+        /* --- FIX LOCK BAR (STICKY HEADER) AGAR STAY --- */
         .table-wrapper {
             max-height: 400px;
             overflow-y: auto;
+            overflow-x: auto;
+            position: relative;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.4);
+            /* Jangan gunakan scrollbar-width: none agar tombol scroll tetap ada standar browser */
+        }
+
+        table {
+            width: 100%;
+            /* Gunakan separate agar sticky tidak bergeser/aneh saat di-scroll */
+            border-collapse: separate; 
+            border-spacing: 0;
+            margin-top: 0;
+        }
+
+        table thead th {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0; 
+            z-index: 20; /* Lebih tinggi agar tidak tertutup konten */
+            background: #ffffff; 
+            padding: 15px 10px;
+            color: #14487c;
+            /* Hilangkan garis samping */
+            border-left: none;
+            border-right: none;
+        }
+
+        /* --- TOMBOL SCROLL (SCROLLBAR) AGAR MUNCUL TEGAS --- */
+        /* Untuk Chrome, Safari, dan Edge modern */
+        .table-wrapper::-webkit-scrollbar {
+            width: 10px; /* Sedikit lebih lebar agar mudah diklik */
+            height: 10px;
+            display: block !important; /* Paksa muncul */
+        }
+
+        .table-wrapper::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1); /* Track sangat transparan */
+            border-radius: 10px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: rgba(20, 72, 124, 0.2); /* Biru transparan saat diam */
+            border-radius: 10px;
+            border: 2px solid transparent; /* Efek padding */
+            background-clip: padding-box;
+        }
+
+        .table-wrapper:hover::-webkit-scrollbar-thumb,
+        .table-wrapper.is-scrolling::-webkit-scrollbar-thumb {
+            background: rgba(20, 72, 124, 0.6); /* Lebih tegas saat disentuh/scroll */
         }
 
         @media (max-width: 768px) {
@@ -212,10 +229,13 @@
     <div class="report-section">
         <h1>Daftar Laporan</h1>
 
+        <input type="text" id="searchInput" placeholder="Cari laporan...">
+
     <div class="table-wrapper">
         <table>
             <thead>
                 <tr>
+                    <th>No</th>
                     <th>Judul</th>
                     <th>Kategori</th>
                     <th>Deskripsi</th>
@@ -225,13 +245,14 @@
                     <th>Aksi</th>
                 </tr>
             </thead>
-                <tbody>
+                <tbody id="reportTable">
                 {% for report in reports %}
                 <tr>
+                    <td>{{ forloop.counter }}</td>
                     <td>{{ report.title }}</td>
                     <td>{{ report.category }}</td>
-                    <td>{{ report.description|truncatechars:50 }}</td>
-                    <td>{{ report.location|truncatechars:50 }}</td>
+                    <td>{{ report.description|truncatechars:30 }}</td>
+                    <td>{{ report.location|truncatechars:30 }}</td>
 
                     <td>
                         <span class="status-badge 
@@ -302,4 +323,144 @@
                 </tbody>
         </table>
     </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('searchInput');
+    const tableBody = document.getElementById('reportTable');
+    // Di dalam DOMContentLoaded
+    const tableWrapper = document.querySelector('.table-wrapper');
+    let isScrollingTimer;
+
+    tableWrapper.addEventListener('scroll', function() {
+        // 1. Munculkan scrollbar transparan
+        tableWrapper.classList.add('is-scrolling');
+
+        // 2. Hilangkan setelah 1 detik diam
+        clearTimeout(isScrollingTimer);
+        isScrollingTimer = setTimeout(() => {
+            tableWrapper.classList.remove('is-scrolling');
+        }, 1000);
+
+        // 3. Simpan posisi scroll agar tidak balik ke atas (Logika awal kita)
+        localStorage.setItem('tableScroll', tableWrapper.scrollTop);
+    });
+
+    let timeout = null;
+
+    // 🔥 Cek Otoritas (Gunakan is_staff sebagai cadangan jika is_admin tidak terbaca)
+    const isAuthenticated = "{{ user.is_authenticated }}".toLowerCase() === 'true';
+    const isAdmin = ("{{ user.is_admin }}".toLowerCase() === 'true') || ("{{ user.is_staff }}".toLowerCase() === 'true');
+    const IS_ADMIN = isAuthenticated && isAdmin;
+
+    function renderRows(data) {
+        let rows = '';
+        const statusColor = {
+            'REPORTED': 'bg-reported', 
+            'VERIFIED': 'bg-verified',
+            'IN_PROGRESS': 'bg-progress', 
+            'RESOLVED': 'bg-resolved'
+        };
+
+        if (!data.results || data.results.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="8">Laporan tidak ditemukan</td></tr>';
+            return;
+        }
+
+        data.results.forEach((item, index) => {
+            // 1. Kolom AKSI (Detail untuk semua, Edit/Hapus khusus Admin)
+            let actionBtns = `<a href="/detail/${item.id}/" class="detail-btn">Detail</a>`;
+            
+            // 2. Kolom UPDATE STATUS (Hanya untuk Admin)
+            let updateCol = '<span>-</span>';
+
+            if (IS_ADMIN) {
+                // Tambahkan tombol Edit & Hapus
+                actionBtns += `
+                    <a href="/edit/${item.id}/" class="edit-btn">Edit</a>
+                    <a href="/delete/${item.id}/" class="delete-btn">Hapus</a>
+                `;
+
+                // Tambahkan Form Update Status
+                if (item.status !== 'RESOLVED') {
+                    updateCol = `
+                        <form action="/update-status/${item.id}/" method="post" 
+                              onsubmit="return confirm('Yakin mau mengubah status?')"
+                              style="display: flex; gap: 5px; justify-content: center;">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                            <select name="status" style="padding: 5px; border-radius: 4px;">
+                                <option value="REPORTED" ${item.status === 'REPORTED' ? 'selected' : ''}>REPORTED</option>
+                                <option value="VERIFIED" ${item.status === 'VERIFIED' ? 'selected' : ''}>VERIFIED</option>
+                                <option value="IN_PROGRESS" ${item.status === 'IN_PROGRESS' ? 'selected' : ''}>IN_PROGRESS</option>
+                                <option value="RESOLVED" ${item.status === 'RESOLVED' ? 'selected' : ''}>RESOLVED</option>
+                            </select>
+                            <button type="submit" style="padding: 5px 10px; background: #0ea5e9; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                Update
+                            </button>
+                        </form>
+                    `;
+                } else {
+                    updateCol = '<span>Selesai</span>';
+                }
+            }
+
+            rows += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${item.title}</td>
+                    <td>${item.category}</td>
+                    <td>${item.description ? item.description.slice(0, 30) : ''}</td>
+                    <td>${item.location ? item.location.slice(0, 30) : ''}</td>
+                    <td>
+                        <span class="status-badge ${statusColor[item.status] || ''}">
+                            ${item.status}
+                        </span>
+                    </td>
+                    <td>${updateCol}</td>
+                    <td>${actionBtns}</td>
+                </tr>
+            `;
+        });
+
+        tableBody.innerHTML = rows;
+
+        // Pulihkan scroll setelah render selesai[cite: 4]
+        const savedScrollPos = localStorage.getItem('tableScroll');
+        if (savedScrollPos) {
+            tableWrapper.scrollTop = parseInt(savedScrollPos);
+        }
+    }
+
+    function fetchData(query) {
+        fetch(`/search/?q=${query}`)
+            .then(res => res.json())
+            .then(data => renderRows(data));
+    }
+
+    // Restore state pencarian[cite: 4]
+    const savedQuery = localStorage.getItem('searchQuery');
+    if (savedQuery && savedQuery.trim() !== '') {
+        searchInput.value = savedQuery;
+        fetchData(savedQuery);
+    }
+
+    // Listener Pencarian[cite: 4]
+    searchInput.addEventListener('keyup', function () {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            localStorage.setItem('searchQuery', searchInput.value);
+            tableWrapper.scrollTop = 0;
+            localStorage.setItem('tableScroll', 0);
+            fetchData(searchInput.value);
+        }, 250);
+    });
+
+    // Listener Scroll[cite: 4]
+    tableWrapper.addEventListener('scroll', function() {
+        localStorage.setItem('tableScroll', tableWrapper.scrollTop);
+    });
+});
+</script>
+
 {% endblock %}
