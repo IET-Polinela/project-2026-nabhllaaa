@@ -194,6 +194,29 @@
             background: rgba(20, 72, 124, 0.6); /* Lebih tegas saat disentuh/scroll */
         }
 
+        .btn-dashboard-custom {
+            display: inline-block;
+            padding: 12px 30px;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.2); /* Transparan putih */
+            backdrop-filter: blur(10px); /* Efek kaca */
+            -webkit-backdrop-filter: blur(10px);
+            color: #14487c;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-dashboard-custom:hover {
+            background: white;
+            color: #14487c; /* Warna tulisan gelap saat hover */
+            transform: translateY(-3px); /* Efek melayang sedikit */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
         @media (max-width: 768px) {
             .report-section {
                 width: 95%;
@@ -224,6 +247,10 @@
             Bantu menjaga kota tetap aman, nyaman, dan terhubung 
             dengan melaporkan berbagai kejadian yang terjadi di sekitar Anda.
         </p>
+    <!-- Tombol Pintu Masuk Dashboard -->
+        <a href="{% url 'dashboard' %}" class="btn btn-dashboard-custom">
+            📊 Lihat Statistik Kota (Dashboard)
+        </a>
         </div>
 
     <div class="report-section">
