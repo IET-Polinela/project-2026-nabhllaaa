@@ -3,63 +3,90 @@
 {% block title %}About | Linkon City{% endblock %}
 
 {% block content %}
+<!-- Import Font Fredoka agar seragam -->
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
     body {
-        overflow-y: hidden;
+        font-family: 'Fredoka', sans-serif;
+        /* Gradient yang sama dengan home & dashboard */
+        background: linear-gradient(135deg, #2d7cc1, #5ea6ff, #0c2036);
+        min-height: 100vh;
+        margin: 0;
+        /* Hapus overflow hidden agar user bisa scroll jika teks panjang di HP */
+        overflow-y: hidden; 
     }
     
     .about-wrapper {
         display: flex;
         justify-content: center;
-        align-items: flex-start; /* ⬅️ ini kunci */
-        padding-top: 40px; /* atur jarak dari navbar */
-        min-height: 80vh;
+        align-items: flex-start; 
+        /* 1. Margin negatif untuk narik box ke atas (melawan mt-4 di base.html)[cite: 8] */
+        margin-top: -30px; 
+        /* 2. Gunakan padding-top ini untuk atur naik-turunnya box secara presisi */
+        padding-top: 40px; 
+        padding-bottom: 60px;
+        padding-left: 20px;
+        padding-right: 20px;
     }
 
     .box {
-        background: rgba(255, 255, 255, 0.1);
+        /* Warna biru navy transparan setema */
+        background: rgba(209, 227, 255, 0.8); 
         backdrop-filter: blur(15px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
         padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+        border-radius: 25px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
         max-width: 800px;
-        color: white;
         width: 100%;
+        color: #14487c; /* Teks navy gelap agar kontras[cite: 7] */
+        transition: transform 0.3s ease;
+    }
+
+    .box:hover {
+        transform: translateY(-5px);
     }
 
     h1 {
-        font-size: 30px;
-        margin-bottom: 20px;
+        font-size: 32px;
+        margin-bottom: 25px;
         text-align: center;
         font-weight: 600;
+        color: #14487c;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
     }
 
     p {
-        font-size: 16px;
-        line-height: 1.7;
+        font-size: 17px;
+        line-height: 1.8;
         text-align: justify;
+        margin-bottom: 15px;
     }
 
     .highlight {
-        color: #a2d2ff;
+        color: #0ea5e9; /* Biru cerah untuk highlight setema dashboard[cite: 7] */
         font-weight: 600;
     }
 
-/* 🔥 MODE HP */
+    /* 🔥 RESPONSIVE */
     @media (max-width: 768px) {
+        .about-wrapper {
+            margin-top: -10px;
+            padding-top: 20px;
+        }
+
         .box {
-            max-width: 90%;   /* biar ramping */
-            padding: 25px 18px;
+            padding: 25px 20px;
         }
 
         h1 {
-            font-size: 22px;
+            font-size: 24px;
         }
 
         p {
-            font-size: 14px;
+            font-size: 15px;
             line-height: 1.6;
         }
     }
@@ -70,14 +97,14 @@
         <h1>Tentang Pusat Layanan Linkon City</h1>
 
         <p>
-            Linkon City adalah kota yang memprioritaskan kenyamanan dan keamanan bagi siapapun yang berkunjung.
+            Linkon City adalah kota yang memprioritaskan kenyamanan dan keamanan bagi siapapun yang berkunjung. 
             Namun, <span class="highlight">masalah</span> terkadang muncul hingga menyebabkan ketenangan warga terganggu.
         </p>
 
         <p>
             Platform ini didirikan untuk memfasilitasi komunikasi antara warga dan para 
-            <span class="highlight">pengelola kota</span>.
-            Setiap laporan yang Anda kirimkan akan kami catat dan lakukan perbaikan segera.
+            <span class="highlight">pengelola kota</span>. 
+            Setiap laporan yang Anda kirimkan akan kami catat dan lakukan perbaikan segera untuk memastikan Linkon City tetap menjadi tempat terbaik untuk ditinggali.
         </p>
     </div>
 </div>
