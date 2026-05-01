@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'about',
     'contacts',
     'usermanagement_24782022',
+    'dashboard_24782022',
 ]
 
 MIDDLEWARE = [
