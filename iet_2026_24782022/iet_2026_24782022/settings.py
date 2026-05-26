@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'usermanagement_24782022',
     'dashboard_24782022',
     'rest_framework',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -134,3 +135,14 @@ LOGOUT_REDIRECT_URL = 'login'
 
 TIME_ZONE = 'Asia/Jakarta'
 USE_TZ = True
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication', # <-- TAMBAHKAN BARIS INI
+    )
+}
