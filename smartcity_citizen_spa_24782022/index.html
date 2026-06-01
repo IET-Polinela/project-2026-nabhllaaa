@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linkon City | Portal Warga SPA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        /* Replikasi Desain Pusat Pelayanan Linkon City (Port 8000) */
+        :root {
+            --linkon-blue: #4a90e2;
+            --linkon-dark-blue: #2c5aa0;
+            --linkon-bg: #eef5fc;
+            --linkon-card-bg: #ffffff;
+        }
+
+        body {
+            background-color: var(--linkon-bg);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #3a506b;
+        }
+
+        /* Navbar Berwarna Biru Solid Sesuai Contoh Gambar */
+        .navbar {
+            background-color: #1e70cd !important;
+            box-shadow: 0 4px 15px rgba(30, 112, 205, 0.2);
+            padding: 15px 0;
+        }
+        .navbar-brand {
+            font-size: 1.4rem;
+            letter-spacing: 0.3px;
+        }
+
+        /* Card Melayang Sudut Bulat Halus (Sama Seperti Main Card Port 8000) */
+        .custom-card {
+            border: none;
+            border-radius: 24px;
+            background: var(--linkon-card-bg);
+            box-shadow: 0 10px 35px rgba(74, 144, 226, 0.12);
+        }
+
+        /* Form Input dengan Background Biru Sangat Muda Ketika Fokus */
+        .form-control {
+            border-radius: 14px;
+            padding: 14px 18px;
+            border: 2px solid #d0e1f9;
+            background-color: #f7faff;
+            color: #2c5aa0;
+            font-weight: 500;
+        }
+        .form-control:focus {
+            background-color: #ffffff;
+            box-shadow: 0 0 0 5px rgba(74, 144, 226, 0.2);
+            border-color: var(--linkon-blue);
+        }
+
+        /* Tombol Utama rounded dengan Warna Biru Terang Icon */
+        .btn-linkon {
+            background-color: #1e70cd;
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 14px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+        }
+        .btn-linkon:hover {
+            background-color: var(--linkon-dark-blue);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 112, 205, 0.3);
+        }
+
+        /* Dashed Placeholder Tengah Dashboard */
+        .border-dashed {
+            border: 3px dashed #b0d4ff !important;
+            background: #fbfdff !important;
+        }
+        
+        .badge-blue {
+            background-color: #e1effe;
+            color: #1e70cd;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark mb-5">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-white" href="#login">
+                <i class="bi bi-buildings-fill me-2"></i>Linkon City
+            </a>
+            <div id="nav-menus" class="ms-auto"></div>
+        </div>
+    </nav>
+
+    <main class="container mb-5" id="app-content"></main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script type="module" src="./js/app.js"></script>
+</body>
+</html>
