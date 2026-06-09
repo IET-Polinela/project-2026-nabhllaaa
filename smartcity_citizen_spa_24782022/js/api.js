@@ -31,7 +31,13 @@ export async function requestAPI(endpoint, method = 'GET', bodyData = null) {
         
         // Jika response error (401, 400, 403, dll) tetap lempar datanya biar ketahuan erornya
         if (!response.ok) {
-            const errorData = await response.json();
+            const errorData = await response.json().catch(() => ({ detail: 'Permintaan gagal.' }));
+
+            if (response.status === 401) {
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
+            }
+
             throw errorData;
         }
 

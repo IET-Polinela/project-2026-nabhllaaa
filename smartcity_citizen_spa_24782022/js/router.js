@@ -33,36 +33,59 @@ const routes = {
         <div class="row g-4">
             <aside class="col-12 col-lg-3">
                 <div class="card custom-card p-3 sticky-top" style="top: 24px;">
-                    <button class="btn btn-linkon w-100 mb-3 shadow-sm" onclick="alert('Fitur pembuatan laporan baru sedang disiapkan oleh sistem!')">
+                    <button class="btn btn-linkon w-100 mb-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#reportModal" type="button">
                         <i class="bi bi-plus-circle-fill me-2"></i>Buat Laporan Baru
                     </button>
                     <div class="list-group list-group-flush small">
-                        <a href="#dashboard" class="list-group-item list-group-item-action active rounded-3 border-0 py-2.5 mb-1 text-white" style="background-color: #1e70cd !important;">
+                        <a id="menuFeed" href="#dashboard" class="list-group-item list-group-item-action active rounded-3 border-0 py-2.5 mb-1 text-white" style="background-color: #1e70cd !important;">
                             <i class="bi bi-grid-1x2-fill me-2"></i>Dashboard Utama
                         </a>
-                        <a href="#dashboard" class="list-group-item list-group-item-action text-secondary rounded-3 border-0 py-2.5 mb-1" onclick="alert('Daftar aduan Anda sedang dimuat dari server...')">
+                        <a id="menuMyReports" href="#dashboard" class="list-group-item list-group-item-action text-secondary rounded-3 border-0 py-2.5 mb-1">
                             <i class="bi bi-file-text me-2"></i>Daftar Laporanku
-                        </a>
-                        <a href="#dashboard" class="list-group-item list-group-item-action text-secondary rounded-3 border-0 py-2.5" onclick="alert('Profil pengguna terautentikasi aktif.')">
-                            <i class="bi bi-person me-2"></i>Informasi Akun
                         </a>
                     </div>
                 </div>
             </aside>
 
             <section class="col-12 col-lg-6">
-                <div class="card custom-card p-5 text-center border-dashed d-flex flex-column align-items-center justify-content-center" style="min-height: 380px;">
-                    <div class="badge-blue rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 75px; height: 75px;">
-                        <i class="bi bi-check-circle-fill fs-2" style="color: #1e70cd;"></i>
+                <div class="card custom-card p-4 p-md-5 border-dashed" style="min-height: 380px;">
+                    <div class="text-center d-flex flex-column align-items-center justify-content-center" style="min-height: 320px;">
+                        <div class="badge-blue rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 75px; height: 75px;">
+                            <i id="featureIcon" class="bi bi-check-circle-fill fs-2" style="color: #1e70cd;"></i>
+                        </div>
+                        <h4 id="featureTitle" class="fw-bold text-dark mb-2">Autentikasi Berhasil Terhubung!</h4>
+                        <p id="featureDescription" class="text-secondary small px-md-3 lh-lg">Selamat datang di panel kendali warga Linkon City. Sesi login Anda saat ini telah berjalan aman menggunakan enkripsi secure token. Seluruh fitur pelaporan, pemantauan infrastruktur, dan sinkronisasi data publik instan siap disajikan di halaman utama ini.</p>
                     </div>
-                    <h4 class="fw-bold text-dark mb-2">Autentikasi Berhasil Terhubung!</h4>
-                    <p class="text-secondary small px-md-3 lh-lg">Selamat datang di panel kendali warga Linkon City. Sesi login Anda saat ini telah berjalan aman menggunakan enkripsi secure token. Seluruh fitur pelaporan, pemantauan infrastruktur, dan sinkronisasi data publik instan siap disajikan di halaman utama ini.</p>
+                    <div id="featurePanel" class="mt-3"></div>
+                    <div class="mt-4">
+                        <div id="listContainer" class="row g-3"></div>
+                        <div id="paginationContainer" class="mt-3"></div>
+                    </div>
                 </div>
             </section>
 
-            <aside class="col-12 col-lg-3 d-none d-lg-block">
+            <aside class="col-12 col-lg-3">
                 <div class="card custom-card p-4 sticky-top" style="top: 24px;">
                     <h6 class="fw-bold text-dark mb-3">
+                        <i class="bi bi-info-circle-fill text-primary me-2" style="color: #1e70cd !important;"></i>Rekap Status Laporan
+                    </h6>
+                    <div class="small text-secondary mb-3">Ringkasan semua laporan Anda dalam satu tampilan.</div>
+                    <div class="d-grid gap-2">
+                        <div class="p-3 rounded-3" style="background-color: #f7faff; border: 1px solid #dbe8fb;">
+                            <div class="text-secondary small">Draft</div>
+                            <div id="draftCount" class="fw-bold fs-4 text-dark">0</div>
+                        </div>
+                        <div class="p-3 rounded-3" style="background-color: #f7faff; border: 1px solid #dbe8fb;">
+                            <div class="text-secondary small">Diproses</div>
+                            <div id="processedCount" class="fw-bold fs-4 text-dark">0</div>
+                        </div>
+                        <div class="p-3 rounded-3" style="background-color: #f7faff; border: 1px solid #dbe8fb;">
+                            <div class="text-secondary small">Selesai</div>
+                            <div id="completedCount" class="fw-bold fs-4 text-dark">0</div>
+                        </div>
+                    </div>
+                    <hr class="my-3" style="border-color: #d0e1f9;">
+                    <h6 class="fw-bold text-dark mb-2">
                         <i class="bi bi-info-circle-fill text-primary me-2" style="color: #1e70cd !important;"></i>Panduan Kota
                     </h6>
                     <p class="small text-secondary lh-lg m-0">Gunakan sistem integrasi satu pintu ini untuk melaporkan segala bentuk kendala infrastruktur jalan, kebersihan umum, atau layanan publik kota.</p>
@@ -76,6 +99,47 @@ const routes = {
     `
 };
 
+function activateMenuItem(menuId) {
+    const menuItems = ['menuFeed', 'menuMyReports'];
+
+    menuItems.forEach((id) => {
+        const item = document.getElementById(id);
+        if (!item) return;
+
+        item.classList.remove('active', 'text-white');
+        item.classList.add('text-secondary');
+        item.style.backgroundColor = '';
+    });
+
+    const activeItem = document.getElementById(menuId);
+    if (activeItem) {
+        activeItem.classList.add('active', 'text-white');
+        activeItem.classList.remove('text-secondary');
+        activeItem.style.backgroundColor = '#1e70cd';
+    }
+}
+
+function setFeatureView(mode = 'feed') {
+    const titleEl = document.getElementById('featureTitle');
+    const descEl = document.getElementById('featureDescription');
+    const iconEl = document.getElementById('featureIcon');
+    const panelEl = document.getElementById('featurePanel');
+
+    if (!titleEl || !descEl || !iconEl) return;
+
+    if (mode === 'my_reports') {
+        titleEl.textContent = 'Daftar Laporanku';
+        descEl.textContent = 'Tampilan ini memuat laporan yang Anda kirimkan sendiri dengan status yang terbaru.';
+        iconEl.className = 'bi bi-file-text-fill fs-2';
+    } else {
+        titleEl.textContent = 'Autentikasi Berhasil Terhubung!';
+        descEl.textContent = 'Selamat datang di panel kendali warga Linkon City. Sesi login Anda saat ini telah berjalan aman menggunakan enkripsi secure token. Seluruh fitur pelaporan, pemantauan infrastruktur, dan sinkronisasi data publik instan siap disajikan di halaman utama ini.';
+        iconEl.className = 'bi bi-check-circle-fill fs-2';
+    }
+
+    if (panelEl) panelEl.innerHTML = '';
+}
+
 export function handleRouting() {
     let hash = window.location.hash;
     if (!hash || hash === '#/' || !routes[hash]) {
@@ -83,11 +147,71 @@ export function handleRouting() {
     }
     
     const appContent = document.getElementById('app-content');
+    const navMenus = document.getElementById('nav-menus'); // Menangkap container menu navbar
+
     if (appContent) {
         appContent.innerHTML = routes[hash];
         
         if (hash === '#login') {
+            // Hapus tombol logout dari navbar jika di halaman login
+            if (navMenus) navMenus.innerHTML = '';
             setupLoginForm();
+        } 
+        else if (hash === '#dashboard') {
+            // --- PASANG TOMBOL LOGOUT DI SINI ---
+            if (navMenus) {
+                navMenus.innerHTML = `
+                    <button id="btnLogout" class="btn btn-outline-light btn-sm fw-bold px-3 py-2" style="border-radius: 10px;">
+                        <i class="bi bi-box-arrow-right me-1"></i> Keluar
+                    </button>
+                `;
+
+                // Logika ketika tombol logout diklik
+                document.getElementById('btnLogout').addEventListener('click', () => {
+                    localStorage.clear(); // Hapus token JWT yang kedaluwarsa dari browser
+                    window.location.hash = '#login'; // Tendang balik ke halaman login
+                });
+            }
+
+            // Pemicu fungsi bawaan modul Lab 12 kamu
+            if (typeof loadDashboardData === 'function') {
+                loadDashboardData('feed', 1);
+            }
+            if (typeof loadSummaryStats === 'function') {
+                loadSummaryStats();
+            }
+            if (typeof attachReportModalEvents === 'function') {
+                attachReportModalEvents();
+            }
+
+            activateMenuItem('menuFeed');
+            setFeatureView('feed');
+
+            const menuFeed = document.getElementById('menuFeed');
+            const menuMyReports = document.getElementById('menuMyReports');
+
+            if (menuFeed) {
+                menuFeed.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    activateMenuItem('menuFeed');
+                    setFeatureView('feed');
+                    if (typeof loadDashboardData === 'function') {
+                        loadDashboardData('feed', 1);
+                    }
+                });
+            }
+
+            if (menuMyReports) {
+                menuMyReports.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    activateMenuItem('menuMyReports');
+                    setFeatureView('my_reports');
+                    if (typeof loadDashboardData === 'function') {
+                        loadDashboardData('my_reports', 1);
+                    }
+                });
+            }
+
         }
     }
 }

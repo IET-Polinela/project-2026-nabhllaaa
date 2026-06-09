@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='report',
-            name='update_at',
+            name='updated_at',
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AlterField(

@@ -23,6 +23,11 @@ export function setupLoginForm() {
             // Jika sukses (Status 200), simpan sepasang token ke localStorage browser
             localStorage.setItem('access_token', data.access);
             localStorage.setItem('refresh_token', data.refresh);
+            localStorage.setItem('current_username', username.trim());
+
+            const tokenPayload = JSON.parse(atob(data.access.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+            localStorage.setItem('current_user_id', tokenPayload.user_id || tokenPayload.id || '');
+            localStorage.setItem('is_admin', String(Boolean(tokenPayload.is_staff || tokenPayload.is_superuser || tokenPayload.role === 'admin')));
 
             alert('Login Berhasil! Selamat Datang Warga.');
 
