@@ -403,25 +403,37 @@ export async function loadSummaryStats() {
             return status === 'draft' || status === 'draf';
         }).length;
 
-        const processedCount = items.filter(item => {
+        const reportedCount = items.filter(item => {
             const status = String(item?.status || '').toLowerCase();
-            return status === 'reported' || status === 'report' || status === 'submitted'
-                || status === 'verified' || status === 'verifikasi' || status === 'review'
-                || status === 'in_progress' || status === 'diproses' || status === 'processed' || status === 'proses' || status === 'progress';
+            return status === 'reported' || status === 'report' || status === 'submitted';
         }).length;
 
-        const completedCount = items.filter(item => {
+        const verifiedCount = items.filter(item => {
+            const status = String(item?.status || '').toLowerCase();
+            return status === 'verified' || status === 'verifikasi' || status === 'review';
+        }).length;
+
+        const inProgressCount = items.filter(item => {
+            const status = String(item?.status || '').toLowerCase();
+            return status === 'in_progress' || status === 'diproses' || status === 'processed' || status === 'proses' || status === 'progress';
+        }).length;
+
+        const resolvedCount = items.filter(item => {
             const status = String(item?.status || '').toLowerCase();
             return status === 'resolved' || status === 'selesai' || status === 'completed' || status === 'done' || status === 'finish';
         }).length;
 
-        const draftEl = document.getElementById('draftCount');
-        const processedEl = document.getElementById('processedCount');
-        const completedEl = document.getElementById('completedCount');
+        const draftEl       = document.getElementById('draftCount');
+        const reportedEl    = document.getElementById('reportedCount');
+        const verifiedEl    = document.getElementById('verifiedCount');
+        const inProgressEl  = document.getElementById('inProgressCount');
+        const resolvedEl    = document.getElementById('resolvedCount');
 
-        if (draftEl) draftEl.textContent = draftCount;
-        if (processedEl) processedEl.textContent = processedCount;
-        if (completedEl) completedEl.textContent = completedCount;
+        if (draftEl)      draftEl.textContent      = draftCount;
+        if (reportedEl)   reportedEl.textContent   = reportedCount;
+        if (verifiedEl)   verifiedEl.textContent   = verifiedCount;
+        if (inProgressEl) inProgressEl.textContent = inProgressCount;
+        if (resolvedEl)   resolvedEl.textContent   = resolvedCount;
     } catch (error) {
         console.error('loadSummaryStats error:', error);
     }

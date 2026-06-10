@@ -31,62 +31,44 @@ const routes = {
     `,
     '#dashboard': `
         <div class="row g-4">
-            <aside class="col-12 col-lg-3">
-                <div class="card custom-card p-3 sticky-top" style="top: 24px;">
-                    <button class="btn btn-linkon w-100 mb-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#reportModal" type="button">
-                        <i class="bi bi-plus-circle-fill me-2"></i>Buat Laporan Baru
-                    </button>
-                    <div class="list-group list-group-flush small">
-                        <a id="menuFeed" href="#dashboard" class="list-group-item list-group-item-action active rounded-3 border-0 py-2.5 mb-1 text-white" style="background-color: #1e70cd !important;">
-                            <i class="bi bi-grid-1x2-fill me-2"></i>Dashboard Utama
-                        </a>
-                        <a id="menuMyReports" href="#dashboard" class="list-group-item list-group-item-action text-secondary rounded-3 border-0 py-2.5 mb-1">
-                            <i class="bi bi-file-text me-2"></i>Daftar Laporanku
-                        </a>
-                    </div>
-                </div>
-            </aside>
 
-            <section class="col-12 col-lg-6">
-                <div class="card custom-card p-4 p-md-5 border-dashed" style="min-height: 380px;">
-                    <div class="text-center d-flex flex-column align-items-center justify-content-center" style="min-height: 320px;">
-                        <div class="badge-blue rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 75px; height: 75px;">
-                            <i id="featureIcon" class="bi bi-check-circle-fill fs-2" style="color: #1e70cd;"></i>
-                        </div>
-                        <h4 id="featureTitle" class="fw-bold text-dark mb-2">Autentikasi Berhasil Terhubung!</h4>
-                        <p id="featureDescription" class="text-secondary small px-md-3 lh-lg">Selamat datang di panel kendali warga Linkon City. Sesi login Anda saat ini telah berjalan aman menggunakan enkripsi secure token. Seluruh fitur pelaporan, pemantauan infrastruktur, dan sinkronisasi data publik instan siap disajikan di halaman utama ini.</p>
-                    </div>
-                    <div id="featurePanel" class="mt-3"></div>
-                    <div class="mt-4">
-                        <div id="listContainer" class="row g-3"></div>
-                        <div id="paginationContainer" class="mt-3"></div>
-                    </div>
-                </div>
-            </section>
-
+            <!-- SIDEBAR KIRI: Rekap Status + Panduan Kota -->
             <aside class="col-12 col-lg-3">
                 <div class="card custom-card p-4 sticky-top" style="top: 24px;">
+
+                    <!-- Rekap Status Laporan -->
                     <h6 class="fw-bold text-dark mb-3">
-                        <i class="bi bi-info-circle-fill text-primary me-2" style="color: #1e70cd !important;"></i>Rekap Status Laporan
+                        <i class="bi bi-bar-chart-fill me-2" style="color: #1e70cd;"></i>Rekap Status Laporan
                     </h6>
                     <div class="small text-secondary mb-3">Ringkasan semua laporan Anda dalam satu tampilan.</div>
-                    <div class="d-grid gap-2">
-                        <div class="p-3 rounded-3" style="background-color: #f7faff; border: 1px solid #dbe8fb;">
+                    <div class="d-grid gap-2 mb-3">
+                        <div class="p-3 rounded-3" style="background-color: #fffbf0; border: 1px solid #ffe08a;">
                             <div class="text-secondary small">Draft</div>
-                            <div id="draftCount" class="fw-bold fs-4 text-dark">0</div>
+                            <div id="draftCount" class="fw-bold fs-4 text-warning">0</div>
                         </div>
-                        <div class="p-3 rounded-3" style="background-color: #f7faff; border: 1px solid #dbe8fb;">
-                            <div class="text-secondary small">Diproses</div>
-                            <div id="processedCount" class="fw-bold fs-4 text-dark">0</div>
+                        <div class="p-3 rounded-3" style="background-color: #f2f2f2; border: 1px solid #cccccc;">
+                            <div class="text-secondary small">Reported</div>
+                            <div id="reportedCount" class="fw-bold fs-4 text-dark">0</div>
                         </div>
-                        <div class="p-3 rounded-3" style="background-color: #f7faff; border: 1px solid #dbe8fb;">
-                            <div class="text-secondary small">Selesai</div>
-                            <div id="completedCount" class="fw-bold fs-4 text-dark">0</div>
+                        <div class="p-3 rounded-3" style="background-color: #eef5ff; border: 1px solid #b8d4ff;">
+                            <div class="text-secondary small">Verified</div>
+                            <div id="verifiedCount" class="fw-bold fs-4 text-primary">0</div>
+                        </div>
+                        <div class="p-3 rounded-3" style="background-color: #fffbf0; border: 1px solid #ffe08a;">
+                            <div class="text-secondary small">In Progress</div>
+                            <div id="inProgressCount" class="fw-bold fs-4 text-warning">0</div>
+                        </div>
+                        <div class="p-3 rounded-3" style="background-color: #f0fff4; border: 1px solid #9be9b8;">
+                            <div class="text-secondary small">Resolved</div>
+                            <div id="resolvedCount" class="fw-bold fs-4 text-success">0</div>
                         </div>
                     </div>
+
                     <hr class="my-3" style="border-color: #d0e1f9;">
+
+                    <!-- Panduan Kota -->
                     <h6 class="fw-bold text-dark mb-2">
-                        <i class="bi bi-info-circle-fill text-primary me-2" style="color: #1e70cd !important;"></i>Panduan Kota
+                        <i class="bi bi-info-circle-fill me-2" style="color: #1e70cd;"></i>Panduan Kota
                     </h6>
                     <p class="small text-secondary lh-lg m-0">Gunakan sistem integrasi satu pintu ini untuk melaporkan segala bentuk kendala infrastruktur jalan, kebersihan umum, atau layanan publik kota.</p>
                     <hr class="my-3" style="border-color: #d0e1f9;">
@@ -95,6 +77,47 @@ const routes = {
                     </div>
                 </div>
             </aside>
+
+            <!-- KONTEN UTAMA -->
+            <section class="col-12 col-lg-9">
+
+                <!-- BARIS ATAS: Tombol Buat Laporan + Tab Navigasi -->
+                <div class="card custom-card px-4 py-3 mb-4 d-flex flex-row align-items-center justify-content-between flex-wrap gap-3">
+                    <button class="btn btn-linkon shadow-sm px-4" data-bs-toggle="modal" data-bs-target="#reportModal" type="button">
+                        <i class="bi bi-plus-circle-fill me-2"></i>Buat Laporan Baru
+                    </button>
+                    <div class="d-flex gap-2">
+                        <a id="menuFeed" href="#dashboard"
+                            class="btn btn-sm fw-semibold px-3 py-2 rounded-3 text-white"
+                            style="background-color: #1e70cd; border: none;">
+                            <i class="bi bi-grid-1x2-fill me-1"></i>Dashboard Utama
+                        </a>
+                        <a id="menuMyReports" href="#dashboard"
+                            class="btn btn-sm fw-semibold px-3 py-2 rounded-3 text-secondary"
+                            style="background-color: #eef5fc; border: 1px solid #d0e1f9;">
+                            <i class="bi bi-file-text me-1"></i>Daftar Laporanku
+                        </a>
+                    </div>
+                </div>
+
+                <!-- KARTU KONTEN + LIST -->
+                <div class="card custom-card p-4 p-md-4">
+                    <div class="text-center d-flex flex-column align-items-center justify-content-center" id="featureHeader" style="min-height: 120px;">
+                        <div class="badge-blue rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <i id="featureIcon" class="bi bi-check-circle-fill fs-2" style="color: #1e70cd;"></i>
+                        </div>
+                        <h5 id="featureTitle" class="fw-bold text-dark mb-1">Autentikasi Berhasil Terhubung!</h5>
+                        <p id="featureDescription" class="text-secondary small px-md-3 lh-lg mb-0">Selamat datang di panel kendali warga Linkon City. Sesi login Anda saat ini telah berjalan aman menggunakan enkripsi secure token. Seluruh fitur pelaporan, pemantauan infrastruktur, dan sinkronisasi data publik instan siap disajikan di halaman utama ini.</p>
+                    </div>
+                    <div id="featurePanel" class="mt-2"></div>
+                    <div class="mt-4">
+                        <div id="listContainer" class="row g-3"></div>
+                        <div id="paginationContainer" class="mt-3"></div>
+                    </div>
+                </div>
+
+            </section>
+
         </div>
     `
 };
@@ -106,16 +129,19 @@ function activateMenuItem(menuId) {
         const item = document.getElementById(id);
         if (!item) return;
 
-        item.classList.remove('active', 'text-white');
+        // Reset ke tampilan tidak aktif
+        item.classList.remove('text-white');
         item.classList.add('text-secondary');
-        item.style.backgroundColor = '';
+        item.style.backgroundColor = '#eef5fc';
+        item.style.border = '1px solid #d0e1f9';
     });
 
     const activeItem = document.getElementById(menuId);
     if (activeItem) {
-        activeItem.classList.add('active', 'text-white');
+        activeItem.classList.add('text-white');
         activeItem.classList.remove('text-secondary');
         activeItem.style.backgroundColor = '#1e70cd';
+        activeItem.style.border = 'none';
     }
 }
 
@@ -158,12 +184,29 @@ export function handleRouting() {
             setupLoginForm();
         } 
         else if (hash === '#dashboard') {
-            // --- PASANG TOMBOL LOGOUT DI SINI ---
+            // --- PASANG INFO USER + TOMBOL LOGOUT DI SINI ---
             if (navMenus) {
+                const username = localStorage.getItem('current_username') || 'Pengguna';
+                const isAdmin = localStorage.getItem('is_admin') === 'true';
+                const roleLabel = isAdmin ? 'Admin' : 'Citizen';
+                const roleColor = isAdmin ? '#ffc107' : '#a8d8ff';
+                const roleTextColor = isAdmin ? '#7a4f00' : '#1e70cd';
+                const userIcon = isAdmin ? 'bi-shield-fill' : 'bi-person-circle';
+
                 navMenus.innerHTML = `
-                    <button id="btnLogout" class="btn btn-outline-light btn-sm fw-bold px-3 py-2" style="border-radius: 10px;">
-                        <i class="bi bi-box-arrow-right me-1"></i> Keluar
-                    </button>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="d-flex align-items-center gap-2 px-3 py-1 rounded-3"
+                             style="background-color: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);">
+                            <i class="bi ${userIcon} text-white" style="font-size: 1.1rem;"></i>
+                            <div class="lh-1">
+                                <div class="text-white fw-bold small">${username}</div>
+                                <div class="small fw-semibold" style="color: ${roleColor}; font-size: 0.7rem;">${roleLabel}</div>
+                            </div>
+                        </div>
+                        <button id="btnLogout" class="btn btn-outline-light btn-sm fw-bold px-3 py-2" style="border-radius: 10px;">
+                            <i class="bi bi-box-arrow-right me-1"></i> Keluar
+                        </button>
+                    </div>
                 `;
 
                 // Logika ketika tombol logout diklik
