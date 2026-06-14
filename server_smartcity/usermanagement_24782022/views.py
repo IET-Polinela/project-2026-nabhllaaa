@@ -1,6 +1,12 @@
 from django.shortcuts import render, redirect
 from .forms import RegisterForm
 from django.contrib import messages
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import CustomTokenObtainPairSerializer
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 def register(request):
     if request.method == 'POST':

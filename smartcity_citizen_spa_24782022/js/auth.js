@@ -1,5 +1,19 @@
 import { requestAPI } from './api.js';
 
+function formatErrorMessage(error) {
+    if (!error || typeof error !== 'object') {
+        return 'Terjadi kesalahan. Silakan coba lagi.';
+    }
+
+    return Object.entries(error)
+        .map(([field, messages]) => {
+            const label = field === 'password1' ? 'Password' : field === 'password2' ? 'Konfirmasi password' : field;
+            const text = Array.isArray(messages) ? messages.join(' ') : String(messages);
+            return `${label}: ${text}`;
+        })
+        .join('\n');
+}
+
 export function setupLoginForm() {
     const loginForm = document.getElementById('loginForm');
     
@@ -37,6 +51,45 @@ export function setupLoginForm() {
         } catch (error) {
             // Tampilkan pesan error kalau username/password salah
             alert('Login Gagal: ' + (error.detail || 'Username atau password salah!'));
+        }
+    });
+}
+
+export function setupRegisterForm() {
+    const registerForm = document.getElementById('registerForm');
+
+    if (!registerForm) return;
+
+    registerForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const username = document.getElementById('registerUsername').value.trim();
+        const email = document.getElementById('registerEmail').value.trim();
+        const password1 = document.getElementById('registerPassword1').value;
+        const password2 = document.getElementById('registerPassword2').value;
+
+        if (!username || !email || !password1 || !password2) {
+            alert('Semua field registrasi wajib diisi.');
+            return;
+        }
+
+        if (password1 !== password2) {
+            alert('Konfirmasi password belum sama.');
+            return;
+        }
+
+        try {
+            await requestAPI('/api/register/', 'POST', {
+                username,
+                email,
+                password1,
+                password2
+            });
+
+            alert('Registrasi berhasil. Silakan login dengan akun baru Anda.');
+            window.location.hash = '#login';
+        } catch (error) {
+            alert('Registrasi gagal:\n' + formatErrorMessage(error));
         }
     });
 }

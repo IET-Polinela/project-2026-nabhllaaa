@@ -14,7 +14,11 @@ class IsOwnerAndDraftOrReadOnly(permissions.BasePermission):
         # === PINTU DARURAT UNTUK ADMIN ===
         # Jika user yang sedang login adalah Admin atau Staff, LANGSUNG IZINKAN (True)
         # Jadi Admin tidak akan diperiksa apakah dia pemilik laporan atau bukan.
-        if request.user.is_superuser or request.user.is_staff:
+        if (
+            getattr(request.user, 'is_admin', False) or
+            request.user.is_superuser or
+            request.user.is_staff
+        ):
             return True
 
         # === ATURAN UNTUK WARGA BIASA (CITIZEN) ===

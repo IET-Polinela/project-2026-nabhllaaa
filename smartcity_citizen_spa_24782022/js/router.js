@@ -1,4 +1,4 @@
-import { setupLoginForm } from './auth.js';
+import { setupLoginForm, setupRegisterForm } from './auth.js';
 
 const routes = {
     '#login': `
@@ -25,6 +25,50 @@ const routes = {
                             <i class="bi bi-box-arrow-in-right me-2"></i>Masuk Aplikasi
                         </button>
                     </form>
+                    <div class="text-center small mt-4">
+                        <span class="text-secondary">Belum punya akun?</span>
+                        <a href="#register" class="fw-bold text-decoration-none" style="color: #1e70cd;">Daftar Citizen</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `,
+    '#register': `
+        <div class="row justify-content-center align-items-center" style="min-height: 65vh;">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-5">
+                <div class="card custom-card p-4 p-sm-5">
+                    <div class="text-center mb-4">
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 65px; height: 65px; background-color: #e1effe !important; color: #1e70cd !important;">
+                            <i class="bi bi-person-plus-fill fs-3"></i>
+                        </div>
+                        <h3 class="fw-bold text-dark m-0" style="letter-spacing: -0.5px;">Daftar Citizen</h3>
+                        <p class="text-muted small mt-2">Buat akun warga untuk mengirim dan memantau laporan.</p>
+                    </div>
+                    <form id="registerForm" class="text-start">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-secondary">Username</label>
+                            <input type="text" id="registerUsername" class="form-control" placeholder="Masukkan username" autocomplete="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-secondary">Email</label>
+                            <input type="email" id="registerEmail" class="form-control" placeholder="nama@email.com" autocomplete="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-secondary">Password</label>
+                            <input type="password" id="registerPassword1" class="form-control" placeholder="Minimal 8 karakter" autocomplete="new-password" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-secondary">Konfirmasi Password</label>
+                            <input type="password" id="registerPassword2" class="form-control" placeholder="Ulangi password" autocomplete="new-password" required>
+                        </div>
+                        <button type="submit" class="btn btn-linkon w-100">
+                            <i class="bi bi-person-check-fill me-2"></i>Daftar
+                        </button>
+                    </form>
+                    <div class="text-center small mt-4">
+                        <span class="text-secondary">Sudah punya akun?</span>
+                        <a href="#login" class="fw-bold text-decoration-none" style="color: #1e70cd;">Masuk</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -83,7 +127,7 @@ const routes = {
 
                 <!-- BARIS ATAS: Tombol Buat Laporan + Tab Navigasi -->
                 <div class="card custom-card px-4 py-3 mb-4 d-flex flex-row align-items-center justify-content-between flex-wrap gap-3">
-                    <button class="btn btn-linkon shadow-sm px-4" data-bs-toggle="modal" data-bs-target="#reportModal" type="button">
+                    <button id="createReportBtn" class="btn btn-linkon shadow-sm px-4" data-bs-toggle="modal" data-bs-target="#reportModal" type="button">
                         <i class="bi bi-plus-circle-fill me-2"></i>Buat Laporan Baru
                     </button>
                     <div class="d-flex gap-2">
@@ -110,6 +154,15 @@ const routes = {
                         <p id="featureDescription" class="text-secondary small px-md-3 lh-lg mb-0">Selamat datang di panel kendali warga Linkon City. Sesi login Anda saat ini telah berjalan aman menggunakan enkripsi secure token. Seluruh fitur pelaporan, pemantauan infrastruktur, dan sinkronisasi data publik instan siap disajikan di halaman utama ini.</p>
                     </div>
                     <div id="featurePanel" class="mt-2"></div>
+                    <div class="mt-4">
+                        <label for="reportSearchInput" class="form-label small fw-bold text-secondary">Live Search Laporan</label>
+                        <div class="input-group">
+                            <span class="input-group-text border-0" style="background-color: #e1effe; color: #1e70cd; border-radius: 14px 0 0 14px;">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input type="search" id="reportSearchInput" class="form-control" placeholder="Cari judul, kategori, deskripsi, atau lokasi...">
+                        </div>
+                    </div>
                     <div class="mt-4">
                         <div id="listContainer" class="row g-3"></div>
                         <div id="paginationContainer" class="mt-3"></div>
@@ -153,7 +206,13 @@ function setFeatureView(mode = 'feed') {
 
     if (!titleEl || !descEl || !iconEl) return;
 
-    if (mode === 'my_reports') {
+    const isAdmin = localStorage.getItem('is_admin') === 'true';
+
+    if (isAdmin) {
+        titleEl.textContent = 'Moderasi Laporan Citizen';
+        descEl.textContent = 'Tampilan ini memuat laporan warga yang dapat ditinjau dan diperbarui statusnya oleh admin.';
+        iconEl.className = 'bi bi-shield-check fs-2';
+    } else if (mode === 'my_reports') {
         titleEl.textContent = 'Daftar Laporanku';
         descEl.textContent = 'Tampilan ini memuat laporan yang Anda kirimkan sendiri dengan status yang terbaru.';
         iconEl.className = 'bi bi-file-text-fill fs-2';
@@ -183,6 +242,10 @@ export function handleRouting() {
             if (navMenus) navMenus.innerHTML = '';
             setupLoginForm();
         } 
+        else if (hash === '#register') {
+            if (navMenus) navMenus.innerHTML = '';
+            setupRegisterForm();
+        }
         else if (hash === '#dashboard') {
             // --- PASANG INFO USER + TOMBOL LOGOUT DI SINI ---
             if (navMenus) {
@@ -226,12 +289,22 @@ export function handleRouting() {
             if (typeof attachReportModalEvents === 'function') {
                 attachReportModalEvents();
             }
+            if (typeof attachLiveSearchEvents === 'function') {
+                attachLiveSearchEvents();
+            }
 
             activateMenuItem('menuFeed');
             setFeatureView('feed');
 
             const menuFeed = document.getElementById('menuFeed');
             const menuMyReports = document.getElementById('menuMyReports');
+            const createReportBtn = document.getElementById('createReportBtn');
+            const isAdminDashboard = localStorage.getItem('is_admin') === 'true';
+
+            if (isAdminDashboard) {
+                if (createReportBtn) createReportBtn.classList.add('d-none');
+                if (menuMyReports) menuMyReports.classList.add('d-none');
+            }
 
             if (menuFeed) {
                 menuFeed.addEventListener('click', (event) => {

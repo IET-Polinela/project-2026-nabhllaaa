@@ -6,6 +6,8 @@ let currentPage = 1;
 let allReports = [];
 let totalPages = 1;
 let editingReportId = null;
+let searchDebounceId = null;
+let isSearchMode = false;
 
 // =========================================================
 // FETCH API AUTO-REFRESH (Polling)
@@ -15,6 +17,12 @@ let pollingIntervalId = null;
 
 // Waktu polling dalam milidetik (5 detik)
 const POLLING_INTERVAL_MS = 5000;
+const ADMIN_STATUS_OPTIONS = [
+    { value: 'REPORTED', label: 'Reported' },
+    { value: 'VERIFIED', label: 'Verified' },
+    { value: 'IN_PROGRESS', label: 'In Progress' },
+    { value: 'RESOLVED', label: 'Resolved' }
+];
 
 /**
  * Mulai polling otomatis: setiap POLLING_INTERVAL_MS detik,
@@ -27,7 +35,7 @@ function startStatusPolling() {
 
     pollingIntervalId = setInterval(async () => {
         // Hanya poll jika sedang di halaman dashboard
-        if (window.location.hash !== '#dashboard') {
+        if (window.location.hash !== '#dashboard' || isSearchMode) {
             stopStatusPolling();
             return;
         }
@@ -178,6 +186,27 @@ function getStatusProgress(status) {
     return { label: 'Reported', width: 40, color: 'dark', badgeClass: 'bg-dark text-white', progressClass: 'bg-dark', isDraft: false };
 }
 
+function renderAdminStatusControl(report, currentStatus) {
+    if (!isAdminUser() || currentStatus === 'DRAFT') return '';
+
+    const options = ADMIN_STATUS_OPTIONS.map(option => `
+        <option value="${option.value}" ${option.value === currentStatus ? 'selected' : ''}>${option.label}</option>
+    `).join('');
+
+    return `
+        <div class="mt-3 pt-3 border-top">
+            <label class="form-label small fw-bold text-secondary mb-1" for="statusSelect-${report.id}">Ubah status</label>
+            <select
+                id="statusSelect-${report.id}"
+                class="form-select form-select-sm"
+                onchange="updateReportStatus(${report.id}, this.value)"
+            >
+                ${options}
+            </select>
+        </div>
+    `;
+}
+
 function renderList() {
     const listContainer = document.getElementById('listContainer');
 
@@ -197,6 +226,7 @@ function renderList() {
         const progress = getStatusProgress(report.status);
         const isDraft = progress.isDraft;
         const canEdit = Boolean(report.is_owner) && isDraft;
+        const currentStatus = normalizeStatus(report.status);
 
         return `
             <article class="col-12 col-md-6 col-xl-4">
@@ -223,6 +253,7 @@ function renderList() {
                         </div>
                         ${canEdit ? `<button type="button" class="btn btn-sm btn-outline-primary" onclick="editDraft(${report.id})">Edit</button>` : ''}
                     </div>
+                    ${renderAdminStatusControl(report, currentStatus)}
                 </div>
             </article>
         `;
@@ -234,7 +265,7 @@ function renderPagination() {
 
     if (!paginationContainer) return;
 
-    if (totalPages <= 1) {
+    if (isSearchMode || totalPages <= 1) {
         paginationContainer.innerHTML = '';
         return;
     }
@@ -336,6 +367,32 @@ export function editDraft(id) {
 }
 
 window.editDraft = editDraft;
+
+export async function updateReportStatus(id, status) {
+    const normalizedStatus = normalizeStatus(status);
+
+    if (!id || !normalizedStatus || normalizedStatus === 'DRAFT') return;
+
+    try {
+        await requestAPI(`/api/reports/${id}/`, 'PATCH', { status: normalizedStatus });
+
+        allReports = allReports.map(report => (
+            Number(report.id) === Number(id)
+                ? { ...report, status: normalizedStatus }
+                : report
+        ));
+
+        renderList();
+        await loadSummaryStats();
+        showStatusUpdateNotification();
+    } catch (error) {
+        console.error('updateReportStatus error:', error);
+        alert('Gagal mengubah status laporan. Pastikan akun Anda memiliki akses admin.');
+        await loadDashboardData(currentTab, currentPage);
+    }
+}
+
+window.updateReportStatus = updateReportStatus;
 
 async function submitReport(status) {
     const titleInput = document.getElementById('reportTitle');
@@ -445,6 +502,7 @@ export async function loadDashboardData(tab = currentTab, page = currentPage) {
     }
     currentTab = tab;
     currentPage = page;
+    isSearchMode = false;
 
     try {
         const response = await requestAPI(`/api/reports/?tab=${tab}&page=${page}`, 'GET');
@@ -482,6 +540,58 @@ export async function loadDashboardData(tab = currentTab, page = currentPage) {
         const paginationContainer = document.getElementById('paginationContainer');
         if (paginationContainer) paginationContainer.innerHTML = '';
     }
+}
+
+async function searchReports(query) {
+    const keyword = String(query || '').trim();
+
+    if (!keyword) {
+        isSearchMode = false;
+        await loadDashboardData(currentTab, 1);
+        return;
+    }
+
+    isSearchMode = true;
+    stopStatusPolling();
+
+    try {
+        const response = await requestAPI(`/api/reports/?tab=${currentTab}&q=${encodeURIComponent(keyword)}&page_size=100`, 'GET');
+        allReports = Array.isArray(response?.results)
+            ? response.results
+            : Array.isArray(response?.data?.results)
+                ? response.data.results
+                : [];
+        totalPages = 1;
+
+        renderList();
+        renderPagination();
+    } catch (error) {
+        console.error('searchReports error:', error);
+
+        const listContainer = document.getElementById('listContainer');
+        if (listContainer) {
+            listContainer.innerHTML = `
+                <div class="col-12 text-center text-muted p-5">
+                    <i class="bi bi-search fs-1"></i>
+                    <p class="mt-2 mb-0">Pencarian gagal dimuat.</p>
+                </div>
+            `;
+        }
+    }
+}
+
+function attachLiveSearchEvents() {
+    const input = document.getElementById('reportSearchInput');
+
+    if (!input || input.dataset.boundSearch) return;
+
+    input.dataset.boundSearch = 'true';
+    input.addEventListener('input', () => {
+        clearTimeout(searchDebounceId);
+        searchDebounceId = setTimeout(() => {
+            searchReports(input.value);
+        }, 300);
+    });
 }
 
 function refreshDashboardIfNeeded() {
@@ -527,6 +637,7 @@ function attachReportModalEvents() {
 window.loadDashboardData = loadDashboardData;
 window.loadSummaryStats = loadSummaryStats;
 window.attachReportModalEvents = attachReportModalEvents;
+window.attachLiveSearchEvents = attachLiveSearchEvents;
 
 // Jalankan router begitu halaman web selesai dimuat
 document.addEventListener('DOMContentLoaded', () => {
