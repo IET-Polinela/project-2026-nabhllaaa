@@ -9,6 +9,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from usermanagement_24782022.forms import RegisterForm
+from drf_spectacular.utils import extend_schema, extend_schema_view
 
 def is_admin_user(user):
     return bool(
@@ -17,6 +18,7 @@ def is_admin_user(user):
         getattr(user, 'is_superuser', False)
     )
 
+@extend_schema(exclude=True)
 @csrf_exempt
 @api_view(['POST'])
 @permission_classes([AllowAny]) 
@@ -63,7 +65,6 @@ class IsCitizenOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         # Mengembalikan True HANYA jika user yang login BUKAN admin/staff
         return not is_admin_user(request.user)
-
 
 class ReportViewSet(viewsets.ModelViewSet):
     serializer_class = ReportSerializer
