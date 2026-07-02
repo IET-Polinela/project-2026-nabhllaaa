@@ -198,11 +198,11 @@
     <div class="dashboard-grid">
         <div class="dash-card">
             <h2 class="h6 mb-3 fw-bold text-primary">Laporan Terbaru</h2>
-            <ul id="reportedList"></ul>
+            <table class="table" style="min-height: 10px;"><tbody id="reportedTable"></tbody></table>
         </div>
         <div class="dash-card">
             <h2 class="h6 mb-3 fw-bold text-success">Laporan Selesai</h2>
-            <ul id="resolvedList"></ul>
+            <table class="table" style="min-height: 10px;"><tbody id="resolvedTable"></tbody></table>
         </div>
     </div>
 </div>
@@ -302,17 +302,18 @@
 
     // 2. FUNGSI RENDER LIST
     function renderList(reportedData, resolvedData) {
-        const rList = document.getElementById('reportedList');
-        const sList = document.getElementById('resolvedList');
+        const rList = document.getElementById('reportedTable');
+        const sList = document.getElementById('resolvedTable');
         rList.innerHTML = ""; 
         sList.innerHTML = "";
 
         const createLi = (item, color) => {
-            const li = document.createElement('li');
-            li.style.borderLeft = `6px solid ${color}`;
-            li.innerHTML = `<strong>${item.title}</strong><br><small class="text-muted">${item.category}</small>`;
-            li.onclick = () => openDetail(item.id || item.pk);
-            return li;
+            const tr = document.createElement('tr');
+            tr.style.cursor = 'pointer';
+            tr.style.borderLeft = `6px solid ${color}`;
+            tr.innerHTML = `<td><strong>${item.title}</strong><br><small class="text-muted">${item.category}</small></td>`;
+            tr.onclick = () => openDetail(item.id || item.pk);
+            return tr;
         };
 
         reportedData.forEach(i => rList.appendChild(createLi(i, '#0ea5e9')));
@@ -334,21 +335,6 @@
             new bootstrap.Modal(document.getElementById('detailModal')).show();
         });
     }
-
-    // 4. EVENT SEARCH
-    document.getElementById('searchInput').addEventListener('keyup', function () {
-        const q = this.value;
-        if (q.trim() === "") {
-            refreshDashboardData();
-            return;
-        }
-
-        fetch(`/dashboard/search/?q=${q}`)
-            .then(res => res.json())
-            .then(data => {
-                renderList(data.reported, data.resolved);
-            });
-    });
 
     // 5. JALANKAN PERTAMA KALI & SET INTERVAL
     document.addEventListener('DOMContentLoaded', function () {

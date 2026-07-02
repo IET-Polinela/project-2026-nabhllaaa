@@ -94,9 +94,7 @@ class ReportViewSet(viewsets.ModelViewSet):
         tab = self.request.query_params.get('tab', None)
         query = self.request.query_params.get('q') or self.request.query_params.get('search')
 
-        if user.is_anonymous:
-            queryset = base_queryset.exclude(status='DRAFT')
-        elif is_admin_user(user):
+        if is_admin_user(user):
             # Admin/staff: TIDAK BOLEH melihat laporan berstatus DRAFT milik citizen,
             # baik di list maupun detail (retrieve).
             queryset = base_queryset.exclude(status='DRAFT')
@@ -130,12 +128,8 @@ class ReportViewSet(viewsets.ModelViewSet):
         /api/reports/<id>/ dengan status DRAFT mendapat 404,
         bukan 403 — konsisten dengan queryset yang sudah di-exclude.
         """
-        obj = super().get_object()
-        user = self.request.user
-        if is_admin_user(user) and obj.status == 'DRAFT':
-            from rest_framework.exceptions import NotFound
-            raise NotFound("Laporan dengan status DRAFT tidak dapat diakses oleh admin.")
-        return obj
+    def get_object(self):
+        return super().get_object()
 
     def get_serializer_class(self):
         user = self.request.user

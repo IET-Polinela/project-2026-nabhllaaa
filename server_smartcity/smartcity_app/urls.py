@@ -15,7 +15,7 @@ urlpatterns = [
     path('about/', include('about.urls')),
     path('contacts/', include('contacts.urls')),
     path('add/', views.ReportCreateView.as_view(), name='add_report'),
-    path('edit/<int:pk>/', views.ReportUpdateView.as_view(), name='edit_report'),
+    path('edit/<int:pk>/', views.ReportUpdateView.as_view(), name='update_report'),
     path('delete/<int:pk>/', views.ReportDeleteView.as_view(), name='delete_report'),
     path('detail/<int:pk>/', views.ReportDetailView.as_view(), name='report_detail'),
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),

@@ -85,29 +85,33 @@ const routes = {
                         <i class="bi bi-bar-chart-fill me-2" style="color: #1e70cd;"></i>Rekap Status Laporan
                     </h6>
                     <div class="small text-secondary mb-3">Ringkasan semua laporan Anda dalam satu tampilan.</div>
-                    <div class="d-grid gap-2 mb-3">
-                        <div class="p-3 rounded-3" style="background-color: #fffbf0; border: 1px solid #ffe08a;">
-                            <div class="text-secondary small">Draft</div>
-                            <div id="draftCount" class="fw-bold fs-4 text-warning">0</div>
-                        </div>
-                        <div class="p-3 rounded-3" style="background-color: #f2f2f2; border: 1px solid #cccccc;">
-                            <div class="text-secondary small">Reported</div>
-                            <div id="reportedCount" class="fw-bold fs-4 text-dark">0</div>
-                        </div>
-                        <div class="p-3 rounded-3" style="background-color: #eef5ff; border: 1px solid #b8d4ff;">
-                            <div class="text-secondary small">Verified</div>
-                            <div id="verifiedCount" class="fw-bold fs-4 text-primary">0</div>
-                        </div>
-                        <div class="p-3 rounded-3" style="background-color: #fffbf0; border: 1px solid #ffe08a;">
-                            <div class="text-secondary small">In Progress</div>
-                            <div id="inProgressCount" class="fw-bold fs-4 text-warning">0</div>
-                        </div>
-                        <div class="p-3 rounded-3" style="background-color: #f0fff4; border: 1px solid #9be9b8;">
-                            <div class="text-secondary small">Resolved</div>
-                            <div id="resolvedCount" class="fw-bold fs-4 text-success">0</div>
-                        </div>
-                    </div>
 
+                    <div id="summaryStats">
+
+                        <div class="d-grid gap-2 mb-3">
+                            <div class="p-3 rounded-3" style="background-color: #fffbf0; border: 1px solid #ffe08a;">
+                                <div class="text-secondary small">Draft</div>
+                                <div id="draftCount" class="badge bg-secondary fw-bold fs-4">0</div>
+                            </div>
+                            <div class="p-3 rounded-3" style="background-color: #f2f2f2; border: 1px solid #cccccc;">
+                                <div class="text-secondary small">Reported</div>
+                                <div id="reportedCount" class="fw-bold fs-4 text-dark">0</div>
+                            </div>
+                            <div class="p-3 rounded-3" style="background-color: #eef5ff; border: 1px solid #b8d4ff;">
+                                <div class="text-secondary small">Verified</div>
+                                <div id="verifiedCount" class="fw-bold fs-4 text-primary">0</div>
+                            </div>
+                            <div class="p-3 rounded-3" style="background-color: #fffbf0; border: 1px solid #ffe08a;">
+                                <div class="text-secondary small">In Progress</div>
+                                <div id="inProgressCount" class="fw-bold fs-4 text-warning">0</div>
+                            </div>
+                            <div class="p-3 rounded-3" style="background-color: #f0fff4; border: 1px solid #9be9b8;">
+                                <div class="text-secondary small">Resolved</div>
+                                <div id="resolvedCount" class="fw-bold fs-4 text-success">0</div>
+                            </div>
+                        </div>
+
+                    </div>
                     <hr class="my-3" style="border-color: #d0e1f9;">
 
                     <!-- Panduan Kota -->
@@ -127,11 +131,11 @@ const routes = {
 
                 <!-- BARIS ATAS: Tombol Buat Laporan + Tab Navigasi -->
                 <div class="card custom-card px-4 py-3 mb-4 d-flex flex-row align-items-center justify-content-between flex-wrap gap-3">
-                    <button id="createReportBtn" class="btn btn-linkon shadow-sm px-4" data-bs-toggle="modal" data-bs-target="#reportModal" type="button">
+                    <button id="btnBukaModal" class="btn btn-linkon shadow-sm px-4" data-bs-toggle="modal" data-bs-target="#reportModal" type="button">
                         <i class="bi bi-plus-circle-fill me-2"></i>Buat Laporan Baru
                     </button>
                     <div class="d-flex gap-2">
-                        <a id="menuFeed" href="#dashboard"
+                        <a id="tabFeedKota" href="#dashboard"
                             class="btn btn-sm fw-semibold px-3 py-2 rounded-3 text-white"
                             style="background-color: #1e70cd; border: none;">
                             <i class="bi bi-grid-1x2-fill me-1"></i>Dashboard Utama
@@ -176,7 +180,7 @@ const routes = {
 };
 
 function activateMenuItem(menuId) {
-    const menuItems = ['menuFeed', 'menuMyReports'];
+    const menuItems = ['tabFeedKota', 'menuMyReports'];
 
     menuItems.forEach((id) => {
         const item = document.getElementById(id);
@@ -246,9 +250,16 @@ export function handleRouting() {
             if (navMenus) navMenus.innerHTML = '';
             setupRegisterForm();
         }
-        else if (hash === '#dashboard') {
-            // --- PASANG INFO USER + TOMBOL LOGOUT DI SINI ---
-            if (navMenus) {
+
+            else if (hash === '#dashboard') {
+                // ← TAMBAHKAN INI
+                const token = localStorage.getItem('access_token');
+                if (!token) {
+                    window.location.hash = '#login';
+                    return;
+                }
+                // kode lama di bawah tetap tidak berubah...
+                if (navMenus) {
                 const username = localStorage.getItem('current_username') || 'Pengguna';
                 const isAdmin = localStorage.getItem('is_admin') === 'true';
                 const roleLabel = isAdmin ? 'Admin' : 'Citizen';
@@ -293,12 +304,12 @@ export function handleRouting() {
                 attachLiveSearchEvents();
             }
 
-            activateMenuItem('menuFeed');
+            activateMenuItem('tabFeedKota');
             setFeatureView('feed');
 
-            const menuFeed = document.getElementById('menuFeed');
+            const menuFeed = document.getElementById('tabFeedKota');
             const menuMyReports = document.getElementById('menuMyReports');
-            const createReportBtn = document.getElementById('createReportBtn');
+            const createReportBtn = document.getElementById('btnBukaModal');
             const isAdminDashboard = localStorage.getItem('is_admin') === 'true';
 
             if (isAdminDashboard) {
@@ -309,7 +320,7 @@ export function handleRouting() {
             if (menuFeed) {
                 menuFeed.addEventListener('click', (event) => {
                     event.preventDefault();
-                    activateMenuItem('menuFeed');
+                    activateMenuItem('tabFeedKota');
                     setFeatureView('feed');
                     if (typeof loadDashboardData === 'function') {
                         loadDashboardData('feed', 1);

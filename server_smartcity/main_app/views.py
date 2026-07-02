@@ -6,22 +6,29 @@ from django.views import View
 from .forms import ReportForm
 from django.contrib import messages
 from django.shortcuts import redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404, HttpResponseForbidden
+from django.core.exceptions import PermissionDenied
 from .models import Report
 from django.db.models import Q
 
-def search_reports(request):
-    query = request.GET.get('q', '')
+ALLOWED_TRANSITIONS = {
+    'REPORTED': ['VERIFIED'],
+    'VERIFIED': ['IN_PROGRESS'],
+    'IN_PROGRESS': ['RESOLVED'],
+}
 
-    # Admin tidak boleh melihat laporan berstatus DRAFT
-    if request.user.is_authenticated and (request.user.is_superuser or request.user.is_staff or getattr(request.user, 'is_admin', False)):
-        reports = Report.objects.exclude(status='DRAFT')
-    else:
-        reports = Report.objects.exclude(status='DRAFT')
+def search_reports(request):
+    is_admin_user = request.user.is_authenticated and (
+        request.user.is_superuser or request.user.is_staff or getattr(request.user, 'is_admin', False)
+    )
+    if not is_admin_user:
+        return HttpResponseForbidden("Akses ditolak! Hanya admin yang bisa melakukan pencarian ini.")
+
+    query = request.GET.get('q', '')
+    reports = Report.objects.exclude(status='DRAFT')
 
     if query:
         words = query.split()
-
         q_objects = Q()
         for word in words:
             q_objects &= (
@@ -30,13 +37,11 @@ def search_reports(request):
                 Q(description__icontains=word) |
                 Q(location__icontains=word)
             )
-
         reports = reports.filter(q_objects)
 
     data = list(reports.values(
         'id', 'title', 'category', 'description', 'location', 'status'
     ))
-
     return JsonResponse({'results': data})
 
 class AdminRequiredMixin:
@@ -51,37 +56,87 @@ class AdminRequiredMixin:
 
         return super().dispatch(request, *args, **kwargs)
 
-class ReportListView(ListView):
+class HomeView(ListView):
+    """Halaman utama publik — bisa diakses siapa saja tanpa login."""
     model = Report
-    template_name = 'linkoncity_app/home.html'
+    template_name = 'main_app/home.html'
     context_object_name = 'reports'
 
     def get_queryset(self):
-        # Admin tidak boleh melihat laporan berstatus DRAFT milik citizen
         return Report.objects.exclude(status='DRAFT').order_by('-updated_at')
 
-class ReportDetailView(DetailView):
+class ReportListView(AdminRequiredMixin, ListView):
+    """Panel manajemen laporan — khusus admin."""
+    model = Report
+    template_name = 'main_app/report_list.html'
+    context_object_name = 'reports'
+
+    def get_queryset(self):
+        return Report.objects.exclude(status='DRAFT').order_by('-updated_at')
+
+class ReportDetailView(AdminRequiredMixin, DetailView):
     model = Report
     template_name = 'linkoncity_app/report_detail.html'
     context_object_name = 'report'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['next_statuses'] = ALLOWED_TRANSITIONS.get(self.object.status, [])
+        return context
+
 class ReportCreateView(AdminRequiredMixin, CreateView):
     model = Report
-    template_name = 'linkoncity_app/add_report.html'
+    template_name = 'main_app/add_report.html'
     form_class = ReportForm
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('report_list')
 
-class ReportUpdateView(AdminRequiredMixin, UpdateView):
+class ReportUpdateView(UpdateView):
+    """
+    Admin TIDAK diizinkan mengedit isi laporan warga.
+    Perubahan status laporan harus lewat ReportUpdateStatusView, bukan lewat sini.
+    """
     model = Report
     template_name = 'linkoncity_app/edit_report.html'
     form_class = ReportForm
     success_url = reverse_lazy('home')
 
-    #Delete
-class ReportDeleteView(AdminRequiredMixin, DeleteView):
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            messages.error(request, "Silakan login terlebih dahulu.")
+            return redirect('login')
+
+        if not request.user.is_admin:
+            messages.error(request, "Akses ditolak! Hanya admin yang bisa melakukan aksi ini.")
+            return redirect('home')
+
+        # Admin sudah lolos pengecekan di atas, tapi tetap dilarang mengedit
+        # konten laporan warga.
+        raise PermissionDenied("Admin tidak diizinkan mengedit laporan warga.")
+
+
+class ReportDeleteView(DeleteView):
+    """
+    Admin TIDAK diizinkan menghapus laporan warga.
+    """
     model = Report
     template_name = 'linkoncity_app/delete_report.html'
     success_url = reverse_lazy('home')
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            messages.error(request, "Silakan login terlebih dahulu.")
+            return redirect('login')
+
+        if not request.user.is_admin:
+            messages.error(request, "Akses ditolak! Hanya admin yang bisa melakukan aksi ini.")
+            return redirect('home')
+
+        raise PermissionDenied("Admin tidak diizinkan menghapus laporan warga.")
+
+    def delete(self, request, *args, **kwargs):
+        # Jaring pengaman tambahan kalau delete() dipanggil langsung
+        # (melewati dispatch), misalnya lewat pemanggilan manual/skrip.
+        raise PermissionDenied("Admin tidak diizinkan menghapus laporan warga.")
 
 class ReportUpdateStatusView(View):
     def post(self, request, pk):
@@ -90,17 +145,21 @@ class ReportUpdateStatusView(View):
             return redirect('home')
 
         report = get_object_or_404(Report, pk=pk)
-        new_status = request.POST.get('status')
+        new_status = request.POST.get('new_status') or request.POST.get('status')
+        allowed_next = ALLOWED_TRANSITIONS.get(report.status, [])
+
+        if new_status not in allowed_next:
+            messages.error(request, f"Transisi status dari {report.status} ke {new_status} tidak diizinkan.")
+            return redirect('report_detail', pk=pk)
+
         report.status = new_status
         report.save()
-
         messages.success(request, "Status berhasil diperbarui.")
-        return redirect('home')
+        return redirect('report_detail', pk=pk)
 
 def report_detail_api(request, pk):
     try:
         report = Report.objects.get(pk=pk)
-
         return JsonResponse({
             "title": report.title,
             "category": report.category,
@@ -108,6 +167,5 @@ def report_detail_api(request, pk):
             "created_at": report.created_at.strftime("%Y-%m-%d"),
             "description": report.description,
         })
-
     except Report.DoesNotExist:
-        return JsonResponse({"error": "Not found"}, status=404)
+        raise Http404("Laporan tidak ditemukan")

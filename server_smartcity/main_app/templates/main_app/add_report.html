@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+
+{% block title %}Linkon City | Tambah Laporan{% endblock %}
+
+{% block content %}
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+    /* PAKSA FONT FREDOKA */
+    * {
+        font-family: 'Fredoka', sans-serif !important;
+    }
+
+    body {
+        background: linear-gradient(135deg, #2d7cc1, #5ea6ff, #0c2036) !important;
+        background-attachment: fixed !important;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+
+    .content-wrapper {
+        padding-top: 90px; /* beri ruang navbar */
+        padding-bottom: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 80px);
+    }
+
+    /* Kotak Form: Proporsional di Desktop & Mobile */
+    .form-box {
+        background: rgba(209, 227, 255, 0.9); /* Lebih solid sedikit agar teks jelas */
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        padding: 40px;
+        border-radius: 35px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        
+        /* KUNCI RESPONSIVE */
+        width: 90%; /* Saat Mobile: tidak full layar, ada sisa margin */
+        max-width: 800px; /* Saat Desktop: tidak melebar berlebihan */
+        
+        transition: all 0.3s ease;
+    }
+
+    h2 {
+        color: #14487c;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 35px;
+        font-size: 30px;
+        letter-spacing: -0.5px;
+    }
+
+    /* Form Layout */
+    .field-container {
+        margin-bottom: 22px;
+        text-align: left;
+    }
+    
+    label {
+        font-weight: 600;
+        color: #14487c;
+        margin-bottom: 8px;
+        display: inline-block;
+        font-size: 15px;
+        padding-left: 5px;
+    }
+
+    /* Input Styling agar 'Clean' */
+    input, textarea, select {
+        width: 100% !important;
+        padding: 14px 18px !important;
+        border-radius: 18px !important;
+        border: 2px solid transparent !important;
+        background: rgba(255, 255, 255, 0.8) !important;
+        color: #14487c !important;
+        font-size: 15px !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.03) !important;
+        transition: all 0.3s ease !important;
+    }
+
+    input:focus, textarea:focus, select:focus {
+        background: #ffffff !important;
+        border-color: #5ea6ff !important;
+        box-shadow: 0 8px 20px rgba(94, 166, 255, 0.2) !important;
+        outline: none !important;
+    }
+
+    textarea {
+        min-height: 150px;
+        resize: vertical;
+    }
+
+    /* Tombol Utama */
+    .btn-submit {
+        background: linear-gradient(to right, #0ea5e9, #2563eb);
+        color: white;
+        border: none;
+        padding: 16px;
+        border-radius: 50px;
+        font-weight: 600;
+        width: 100%;
+        cursor: pointer;
+        margin-top: 15px;
+        font-size: 16px;
+        box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+        transition: all 0.3s;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 25px rgba(37, 99, 235, 0.3);
+        filter: brightness(1.1);
+    }
+
+    .btn-cancel {
+        display: block;
+        text-align: center;
+        color: #64748b;
+        text-decoration: none;
+        margin-top: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+    .btn-cancel:hover {
+        color: #ef4444;
+    }
+
+    @media (max-width: 576px) {
+
+        html,
+        body {
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .content-wrapper {
+            min-height: calc(90vh - 70px);
+            padding-top: 90px !important; /* sesuaikan tinggi navbar */
+            padding-bottom: 20px !important;
+
+            display: flex;
+            justify-content: center;
+            align-items: center; /* tengah vertikal */
+        }
+
+        .form-box {
+            width: calc(100% - 24px);
+            max-width: 420px;
+            padding: 20px 16px;
+            border-radius: 24px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            font-size: 22px;
+            margin-bottom: 18px;
+        }
+
+        .field-container {
+            margin-bottom: 14px;
+        }
+
+        label {
+            font-size: 13px;
+        }
+
+        input,
+        textarea,
+        select {
+            padding: 10px 14px !important;
+            font-size: 14px !important;
+        }
+
+        textarea {
+            min-height: 120px;
+        }
+
+        .btn-submit {
+            padding: 13px;
+            font-size: 14px;
+        }
+    }
+
+        .btn-cancel {
+            margin-top: 14px;
+            padding-bottom: 4px;
+        }
+</style>
+
+<div class="content-wrapper">
+    <div class="form-box">
+        <h2>Tambah Laporan</h2>
+
+        <form method="POST" id="reportForm" onsubmit="return showLoading()">
+            {% csrf_token %}
+            
+            {% for field in form %}
+                <div class="field-container">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                </div>
+            {% endfor %}
+
+            <button type="submit" id="submit-btn" class="btn-submit">Kirim Laporan Sekarang</button>
+            <a href="{% url 'report_list' %}" class="btn-cancel">Batal dan Kembali</a>
+        </form>
+    </div>
+</div>
+
+<script>
+function showLoading() {
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.style.opacity = "0.8";
+    btn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Mengirim...`;
+    return true; 
+}
+</script>
+{% endblock %}

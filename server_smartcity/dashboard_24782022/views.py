@@ -3,10 +3,13 @@ from django.http import JsonResponse
 from django.db.models import Count
 from main_app.models import Report
 from django.db.models import Q
+from django.contrib.admin.views.decorators import staff_member_required
+from django.utils.decorators import method_decorator
 
+@method_decorator(staff_member_required(login_url='login'), name='dispatch')
 class DashboardView(TemplateView):
     template_name = 'dashboard.html'
-# dashboard/views.py[cite: 5]
+    
 def search_reports(request):
     query = request.GET.get('q', '')
     reports = Report.objects.all()

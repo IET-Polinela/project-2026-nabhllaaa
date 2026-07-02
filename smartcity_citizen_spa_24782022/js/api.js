@@ -33,10 +33,16 @@ export async function requestAPI(endpoint, method = 'GET', bodyData = null) {
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({ detail: 'Permintaan gagal.' }));
 
-            if (response.status === 401) {
-                localStorage.removeItem('access_token');
-                localStorage.removeItem('refresh_token');
-            }
+        if (response.status === 401) {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('username');
+            localStorage.removeItem('current_username');
+            localStorage.removeItem('current_user_id');
+            localStorage.removeItem('is_admin');
+            alert('Sesi Anda telah habis atau Anda belum login.');
+            window.location.hash = '#login';
+        }
 
             throw errorData;
         }

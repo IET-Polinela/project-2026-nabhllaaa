@@ -42,7 +42,7 @@ function startStatusPolling() {
 
         try {
             // Ambil data laporan terbaru dari server via Fetch API
-            const response = await requestAPI(`/api/reports/?tab=${currentTab}&page=${currentPage}`, 'GET');
+            const response = await requestAPI(`/api/report/?tab=${currentTab}&page=${currentPage}`, 'GET');
 
             const latestResults = Array.isArray(response?.results)
                 ? response.results
@@ -271,26 +271,40 @@ function renderPagination() {
     }
 
     const pages = [];
+
+    // Tombol "Sebelumnya"
+    pages.push(`
+        <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+            <button type="button" class="page-link" data-page="${currentPage - 1}">Sebelumnya</button>
+        </li>
+    `);
+
+    // Tombol nomor halaman
     for (let i = 1; i <= totalPages; i += 1) {
         pages.push(`
-            <button
-                type="button"
-                class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-outline-secondary'}"
-                data-page="${i}"
-            >
-                ${i}
-            </button>
+            <li class="page-item ${i === currentPage ? 'active' : ''}">
+                <button type="button" class="page-link" data-page="${i}">${i}</button>
+            </li>
         `);
     }
 
+    // Tombol "Selanjutnya"
+    pages.push(`
+        <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+            <button type="button" class="page-link" data-page="${currentPage + 1}">Selanjutnya</button>
+        </li>
+    `);
+
     paginationContainer.innerHTML = `
-        <div class="d-flex flex-wrap gap-2 justify-content-center mt-3">${pages.join('')}</div>
+        <ul class="pagination justify-content-center mt-3">${pages.join('')}</ul>
     `;
 
     paginationContainer.querySelectorAll('[data-page]').forEach(button => {
         button.addEventListener('click', () => {
             const page = Number(button.dataset.page);
-            loadDashboardData(currentTab, page);
+            if (page >= 1 && page <= totalPages) {
+                loadDashboardData(currentTab, page);
+            }
         });
     });
 }
@@ -374,7 +388,7 @@ export async function updateReportStatus(id, status) {
     if (!id || !normalizedStatus || normalizedStatus === 'DRAFT') return;
 
     try {
-        await requestAPI(`/api/reports/${id}/`, 'PATCH', { status: normalizedStatus });
+        await requestAPI(`/api/report/${id}/`, 'PATCH', { status: normalizedStatus });
 
         allReports = allReports.map(report => (
             Number(report.id) === Number(id)
@@ -417,7 +431,7 @@ async function submitReport(status) {
     }
 
     try {
-        const endpoint = editingReportId ? `/api/reports/${editingReportId}/` : '/api/reports/';
+        const endpoint = editingReportId ? `/api/report/${editingReportId}/` : '/api/report/';
         const method = editingReportId ? 'PUT' : 'POST';
         
         const result = await requestAPI(endpoint, method, payload);
@@ -428,11 +442,11 @@ async function submitReport(status) {
             closeReportModal();
             reportForm.reset();
             editingReportId = null;
-            
+
+            alert(`Laporan berhasil disimpan sebagai ${payload.status}.`);
+
             await loadDashboardData(currentTab, currentPage);
             await loadSummaryStats();
-        } else {
-            alert('Gagal menyimpan laporan. Periksa log backend Anda.');
         }
     } catch (error) {
         console.error('submitReport error:', error);
@@ -452,7 +466,7 @@ async function submitReport(status) {
 
 export async function loadSummaryStats() {
     try {
-        const response = await requestAPI('/api/reports/?tab=my_reports&page_size=1000', 'GET');
+        const response = await requestAPI('/api/report/?tab=my_reports&page_size=1000', 'GET');
         const items = response?.data?.results || response?.results || [];
 
         const draftCount = items.filter(item => {
@@ -505,7 +519,7 @@ export async function loadDashboardData(tab = currentTab, page = currentPage) {
     isSearchMode = false;
 
     try {
-        const response = await requestAPI(`/api/reports/?tab=${tab}&page=${page}`, 'GET');
+        const response = await requestAPI(`/api/report/?tab=${tab}&page=${page}`, 'GET');
 
         let results = Array.isArray(response?.results)
             ? response.results
@@ -555,7 +569,7 @@ async function searchReports(query) {
     stopStatusPolling();
 
     try {
-        const response = await requestAPI(`/api/reports/?tab=${currentTab}&q=${encodeURIComponent(keyword)}&page_size=100`, 'GET');
+        const response = await requestAPI(`/api/report/?tab=${currentTab}&q=${encodeURIComponent(keyword)}&page_size=100`, 'GET');
         allReports = Array.isArray(response?.results)
             ? response.results
             : Array.isArray(response?.data?.results)
@@ -604,11 +618,11 @@ function attachReportModalEvents() {
     const modalEl = getReportModal();
     const btnDraft = document.getElementById('btnDraft');
     const btnSubmit = document.getElementById('btnSubmit');
-    const createReportBtn = document.querySelector('[data-bs-target="#reportModal"]');
+    const btnBukaModal = document.getElementById('btnBukaModal');
 
-    if (createReportBtn && !createReportBtn.dataset.boundCreate) {
-        createReportBtn.dataset.boundCreate = 'true';
-        createReportBtn.addEventListener('click', () => {
+    if (btnBukaModal && !btnBukaModal.dataset.boundCreate) {
+        btnBukaModal.dataset.boundCreate = 'true';
+        btnBukaModal.addEventListener('click', () => {
             editingReportId = null;
             fillReportForm();
         });
@@ -616,11 +630,6 @@ function attachReportModalEvents() {
 
     if (modalEl && !modalEl.dataset.boundShown) {
         modalEl.dataset.boundShown = 'true';
-        modalEl.addEventListener('shown.bs.modal', () => {
-            if (editingReportId === null) {
-                fillReportForm();
-            }
-        });
     }
 
     if (btnDraft && !btnDraft.dataset.boundDraft) {

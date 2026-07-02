@@ -31,11 +31,13 @@ def normalize_report_status(value):
 
 class ReportSerializer(serializers.ModelSerializer):
     reporter = serializers.SerializerMethodField()
+    reporter_name = serializers.SerializerMethodField()
     is_owner = serializers.SerializerMethodField()
 
     class Meta:
         model = Report
-        fields = ['id', 'title', 'category', 'description', 'location', 'reporter', 'status', 'created_at', 'updated_at', 'is_owner']
+        fields = ['id', 'title', 'category', 'description', 'location',
+                  'reporter', 'reporter_name', 'status', 'created_at', 'updated_at', 'is_owner']
 
     def to_internal_value(self, data):
         mutable_data = data.copy()
@@ -45,18 +47,19 @@ class ReportSerializer(serializers.ModelSerializer):
             'deskripsi': 'description',
             'lokasi': 'location',
         }
-
         for mobile_field, api_field in field_aliases.items():
             if mobile_field in mutable_data and api_field not in mutable_data:
                 mutable_data[api_field] = mutable_data[mobile_field]
-
         if 'status' in mutable_data:
             mutable_data['status'] = normalize_report_status(mutable_data['status'])
-
         return super().to_internal_value(mutable_data)
 
     def get_reporter(self, obj):
-        if obj.reporter and getattr(obj.reporter, 'username', None):
+        return "Warga Anonim"
+
+    def get_reporter_name(self, obj):
+        request = self.context.get('request')
+        if request and request.user and request.user.is_authenticated and obj.reporter == request.user:
             return obj.reporter.username
         return "Warga Anonim"
 
