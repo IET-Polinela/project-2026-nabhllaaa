@@ -23,6 +23,17 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      - name: Delete existing artifacts
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: github-pages
+        continue-on-error: true
+
+      - name: Upload artifact (Hanya Folder Frontend)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './smartcity_citizen_spa_24782022'
+          
       - name: Upload artifact (Hanya Folder Frontend)
         uses: actions/upload-pages-artifact@v3
         with:
